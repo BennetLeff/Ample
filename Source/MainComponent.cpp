@@ -49,7 +49,7 @@ void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRat
 
 void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill)
 {
-	if (reader_source_.get() == nullptr)
+	if (sampler_source_.is_empty())
 	{
 		bufferToFill.clearActiveBufferRegion();
 		return;
@@ -105,17 +105,23 @@ void MainComponent::change_state(TransportState new_state)
 		case TransportState::Stopped:                          
 			stop_button_.setEnabled(false);
 			play_button_.setEnabled(true);
-			sampler_source_.setPosition(0.0);
+			sampler_source_.set_position(0.0);
+			sampler_source_.set_playing(false);
 			break;
 		case TransportState::Starting:                          
 			play_button_.setEnabled(false);
 			sampler_source_.start();
+			sampler_source_.set_playing(true);
+			stop_button_.setEnabled(true);
 			break;
 		case TransportState::Playing:                           
 			stop_button_.setEnabled(true);
+			sampler_source_.set_playing(true);
 			break;
 		case TransportState::Stopping:                          
 			sampler_source_.stop();
+			sampler_source_.set_playing(false);
+			play_button_.setEnabled(true);
 			break;
 		}
 	}
@@ -142,25 +148,30 @@ void MainComponent::open_button_clicked()
 	if (chooser.browseForFileToOpen())
 	{
 		auto file = chooser.getResult();
-		auto* reader = format_manager_.createReaderFor(file);
+		std::unique_ptr<AudioFormatReader> reader(format_manager_.createReaderFor(file));
 
-		if (reader != nullptr)
+		if (reader.get() != nullptr)
 		{
 			auto duration = reader->lengthInSamples / reader->sampleRate;
 
 			if (duration < 5)
 			{
-				std::unique_ptr<AudioFormatReaderSource> new_source(new AudioFormatReaderSource(reader, true));
-
 				sampler_source_.set_size(reader->numChannels, (int)reader->lengthInSamples);
-				sampler_source_.setSource(new_source.get(), 0, nullptr, reader->sampleRate);
+				// sampler_source_.setSource(new_source.get(), 0, nullptr, reader->sampleRate);
+				reader->read((sampler_source_.get_buffer()).get(),
+					0,
+					(int)reader->lengthInSamples,
+					0,
+					true,
+					true);
+				
+				sampler_source_.set_position(0.0);
 				setAudioChannels(0, reader->numChannels);
-
 				play_button_.setEnabled(true);
-				reader_source_.reset(new_source.release());
 			}
 		}
 	}
 
-	state_ = TransportState::Playing;
+	// state_ = TransportState::Playing;
+	sampler_source_.set_playing(false);
 }

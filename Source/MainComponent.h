@@ -24,7 +24,7 @@ public:
     ~MainComponent();
 
     //==============================================================================
-    void prepareToPlay (int samplesPerBlockExpected, double sampleRate) override;
+	void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override;
     void getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill) override;
     void releaseResources() override;
 
@@ -50,8 +50,6 @@ private:
 	TextButton stop_button_;
 
 	AudioFormatManager format_manager_;
-	std::unique_ptr<AudioFormatReaderSource> reader_source_;
-	// AudioTransportSource transport_source_;
 	SampleSource sampler_source_;
 
 	AudioSampleBuffer audio_buffer_;
