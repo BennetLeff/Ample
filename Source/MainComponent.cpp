@@ -142,7 +142,7 @@ void MainComponent::open_button_clicked()
 	{
 		auto file = chooser.getResult();
 		auto path = file.getFullPathName();
-		sampler_source_.chosen_path_.swapWith(path);
+		sampler_source_.set_file_path(path);
 		sampler_source_.notify();
 	}
 
