@@ -25,9 +25,6 @@ MainComponent::MainComponent()
 	stop_button_.setColour(TextButton::buttonColourId, Colours::red);
 	stop_button_.setEnabled(false);
 	
-
-	// format_manager_.registerBasicFormats();
-	// transport_source_.addChangeListener(this);
 	sampler_source_.addChangeListener(this);
 
 	// Make sure you set the size of the component after
@@ -39,14 +36,12 @@ MainComponent::~MainComponent()
 {
     // This shuts down the audio device and clears the audio source.
 	// Setting current_buffer_ to nullptr is all the clean up we need.
-	sampler_source_.current_buffer_ = nullptr;
     shutdownAudio();
 }
 
 //==============================================================================
 void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRate)
 {
-	// transport_source_.prepareToPlay(samplesPerBlockExpected, sampleRate);
 	sampler_source_.prepareToPlay(samplesPerBlockExpected, sampleRate);
 }
 
@@ -66,7 +61,6 @@ void MainComponent::releaseResources()
 	sampler_source_.releaseResources();
 }
 
-//==============================================================================
 void MainComponent::paint (Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
@@ -152,7 +146,6 @@ void MainComponent::open_button_clicked()
 		sampler_source_.notify();
 	}
 
-	// state_ = TransportState::Playing;
 	// This should not be stopping but for now it will do.
 	change_state(TransportState::Stopping);
 	sampler_source_.set_playing(false);

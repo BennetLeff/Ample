@@ -36,7 +36,7 @@ public:
 	bool is_playing() { return is_playing_;  }
 	bool is_empty();
 	
-	std::optional<AudioSampleBuffer*> get_buffer();
+	std::optional<std::shared_ptr<AudioSampleBuffer>> get_buffer();
 
 	ReferenceCountedArray<RefCountedBuffer> buffers_;
 	RefCountedBuffer::Ptr current_buffer_;

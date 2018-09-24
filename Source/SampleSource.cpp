@@ -19,6 +19,7 @@ SampleSource::SampleSource()
 
 SampleSource::~SampleSource() 
 {
+	current_buffer_ = nullptr;
 	stopThread(500);
 }
 
@@ -39,7 +40,7 @@ void SampleSource::getNextAudioBlock(const AudioSourceChannelInfo& buffer_to_fil
 		return;
 	}
 
-	auto* cur_audio_sampler_buffer = retained_current_buffer->get_audio_sample_buffer();
+	auto cur_audio_sampler_buffer = retained_current_buffer->get_audio_sample_buffer();
 	int32_t position = retained_current_buffer->position_;
 
 	int num_in_channels = cur_audio_sampler_buffer->getNumChannels();
@@ -108,7 +109,7 @@ void SampleSource::check_for_path_to_open()
 			if (duration < 2)
 			{
 				RefCountedBuffer::Ptr new_buffer = new RefCountedBuffer(file.getFileName(), reader->numChannels, (int)reader->lengthInSamples);
-				reader->read(new_buffer->get_audio_sample_buffer(), 0, (int)reader->lengthInSamples, 0, true, true);
+				reader->read(new_buffer->get_audio_sample_buffer().get(), 0, (int)reader->lengthInSamples, 0, true, true);
 				current_buffer_ = new_buffer;
 				buffers_.add(new_buffer);
 			}
@@ -120,10 +121,10 @@ void SampleSource::check_for_path_to_open()
 	}
 }
 
-std::optional<AudioSampleBuffer*> SampleSource::get_buffer()
+std::optional<std::shared_ptr<AudioSampleBuffer>> SampleSource::get_buffer()
 {
 	if (current_buffer_)
-		return std::make_optional<>(current_buffer_->get_audio_sample_buffer());
+		return std::make_optional<std::shared_ptr<AudioSampleBuffer>>(current_buffer_->get_audio_sample_buffer());
 	else
 		return std::nullopt;
 }
