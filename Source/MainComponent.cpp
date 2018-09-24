@@ -9,6 +9,7 @@ MainComponent::MainComponent()
 
 	addAndMakeVisible(&open_button_);
 	open_button_.setButtonText("Open...");
+	// this data should be passed to the sampler_source but HOW!?
 	open_button_.onClick = [this] { open_button_clicked(); };
 	
 	addAndMakeVisible(&play_button_);
@@ -25,7 +26,7 @@ MainComponent::MainComponent()
 	stop_button_.setEnabled(false);
 	
 
-	format_manager_.registerBasicFormats();
+	// format_manager_.registerBasicFormats();
 	// transport_source_.addChangeListener(this);
 	sampler_source_.addChangeListener(this);
 
@@ -37,6 +38,8 @@ MainComponent::MainComponent()
 MainComponent::~MainComponent()
 {
     // This shuts down the audio device and clears the audio source.
+	// Setting current_buffer_ to nullptr is all the clean up we need.
+	sampler_source_.current_buffer_ = nullptr;
     shutdownAudio();
 }
 
@@ -60,8 +63,6 @@ void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFil
 
 void MainComponent::releaseResources()
 {
-	// transport_source_.releaseResources();
-	// audio_buffer_.setSize(0, 0);
 	sampler_source_.releaseResources();
 }
 
@@ -139,39 +140,20 @@ void MainComponent::stop_button_clicked()
 
 void MainComponent::open_button_clicked()
 {
-	shutdownAudio();
-
-	FileChooser chooser("Select a WAV file to play....",
+	FileChooser chooser("Select a WAV file to play... ",
 		File::nonexistent,
 		"*.wav");
 
 	if (chooser.browseForFileToOpen())
 	{
 		auto file = chooser.getResult();
-		std::unique_ptr<AudioFormatReader> reader(format_manager_.createReaderFor(file));
-
-		if (reader.get() != nullptr)
-		{
-			auto duration = reader->lengthInSamples / reader->sampleRate;
-
-			if (duration < 5)
-			{
-				sampler_source_.set_size(reader->numChannels, (int)reader->lengthInSamples);
-				// sampler_source_.setSource(new_source.get(), 0, nullptr, reader->sampleRate);
-				reader->read((sampler_source_.get_buffer()).get(),
-					0,
-					(int)reader->lengthInSamples,
-					0,
-					true,
-					true);
-				
-				sampler_source_.set_position(0.0);
-				setAudioChannels(0, reader->numChannels);
-				play_button_.setEnabled(true);
-			}
-		}
+		auto path = file.getFullPathName();
+		sampler_source_.chosen_path_.swapWith(path);
+		sampler_source_.notify();
 	}
 
 	// state_ = TransportState::Playing;
+	// This should not be stopping but for now it will do.
+	change_state(TransportState::Stopping);
 	sampler_source_.set_playing(false);
 }

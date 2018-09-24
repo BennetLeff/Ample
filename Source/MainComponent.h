@@ -49,10 +49,8 @@ private:
 	TextButton play_button_;
 	TextButton stop_button_;
 
-	AudioFormatManager format_manager_;
 	SampleSource sampler_source_;
 
-	AudioSampleBuffer audio_buffer_;
 	int32_t position;
 
 	void change_state(TransportState new_state);
