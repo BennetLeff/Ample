@@ -51,8 +51,6 @@ private:
 
 	SampleSource sampler_source_;
 
-	int32_t position;
-
 	void change_state(TransportState new_state);
 	void open_button_clicked();
 	void play_button_clicked();

@@ -21,6 +21,8 @@ SampleSource::~SampleSource()
 {
 	current_buffer_ = nullptr;
 	stopThread(500);
+
+	state_ = PlaybackState::Stopped;
 }
 
 void SampleSource::getNextAudioBlock(const AudioSourceChannelInfo& buffer_to_fill)
@@ -66,7 +68,7 @@ void SampleSource::getNextAudioBlock(const AudioSourceChannelInfo& buffer_to_fil
 	
 		out_samples_remaining -= samples_this_iter;
 		out_samples_offset += samples_this_iter;
-		set_position(get_position() + samples_this_iter);
+		set_position( get_position() + samples_this_iter );
 
 		if (get_position() == cur_audio_sampler_buffer->getNumSamples())
 			set_position(0);
@@ -145,4 +147,14 @@ void SampleSource::set_size(int num_channels, int num_samples)
 	{
 		(*buffer)->setSize(num_channels, num_samples);
 	}
+}
+
+void SampleSource::prepareToPlay(int samples_per_block_expected, double sample_rate)
+{
+	/* Do nothing? */
+}
+
+void SampleSource::releaseResources()
+{
+	/* Do nothing? */
 }
