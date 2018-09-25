@@ -22,9 +22,9 @@ class SampleSource : public AudioTransportSource, public Thread
 public:
 	SampleSource();
 	~SampleSource();
-	//void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override;
+	void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override;
 	void getNextAudioBlock(const AudioSourceChannelInfo& bufferToFill) override;
-	// void releaseResources() override;
+	void releaseResources() override;
 
 
 	void set_file_path(String path_to_swap) { chosen_path_.swapWith(path_to_swap); }
