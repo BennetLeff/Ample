@@ -26,6 +26,8 @@ public:
 	void getNextAudioBlock(const AudioSourceChannelInfo& bufferToFill) override;
 	void releaseResources() override;
 
+	void start();
+	void stop();
 
 	void set_file_path(String path_to_swap) { chosen_path_.swapWith(path_to_swap); }
 	void set_size(int num_channels, int num_samples);
@@ -45,15 +47,7 @@ private:
 	RefCountedBuffer::Ptr current_buffer_;
 	String chosen_path_;
 
-	int position = 0;
-
-	enum class PlaybackState
-	{
-		Stopped,
-		Starting,
-		Playing,
-		Stopping
-	} state_;
+	double position = 0.0;
 
 	bool is_playing_ = false;
 

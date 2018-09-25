@@ -1,8 +1,9 @@
 #include "MainComponent.h"
-
+#include "Sequencer.h"
 
 MainComponent::MainComponent()
-	: state_(TransportState::Stopped)
+	: state_(TransportState::Stopped),
+	sequencer_(16, 120.0)
 {
     // specify the number of input and output channels that we want to open
     setAudioChannels (0, 2);
@@ -26,6 +27,9 @@ MainComponent::MainComponent()
 	stop_button_.setEnabled(false);
 	
 	sampler_source_.addChangeListener(this);
+	sequencer_.addChangeListener(this);
+
+	sequencer_.update_trigger(true, 0); sequencer_.update_trigger(true, 4); sequencer_.update_trigger(true, 8); sequencer_.update_trigger(true, 12);
 
 	// Make sure you set the size of the component after
 	// you add any child components.
@@ -39,7 +43,6 @@ MainComponent::~MainComponent()
     shutdownAudio();
 }
 
-//==============================================================================
 void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRate)
 {
 	sampler_source_.prepareToPlay(samplesPerBlockExpected, sampleRate);
@@ -88,6 +91,21 @@ void MainComponent::changeListenerCallback(ChangeBroadcaster * source)
 		else
 			change_state(TransportState::Stopped);
 	}
+
+	else if (source == &sequencer_)
+	{
+		if (sequencer_.play_at_current_trigger_ && state_ == TransportState::Playing)
+		{ 
+			Logger::writeToLog("On");
+			sampler_source_.start();
+		}
+		else
+		{
+			sampler_source_.stop();
+			Logger::writeToLog("Off");
+			sampler_source_.set_position(0.0);
+		}
+	}
 }
 
 void MainComponent::change_state(TransportState new_state)
@@ -106,17 +124,14 @@ void MainComponent::change_state(TransportState new_state)
 		case TransportState::Starting:                          
 			play_button_.setEnabled(false);
 			sampler_source_.start();
-			sampler_source_.set_playing(true);
 			stop_button_.setEnabled(true);
 			break;
 		case TransportState::Playing:                           
 			stop_button_.setEnabled(true);
-			sampler_source_.set_playing(true);
 			break;
 		case TransportState::Stopping:                          
-			sampler_source_.stop();
-			sampler_source_.set_playing(false);
 			play_button_.setEnabled(true);
+			sampler_source_.stop();
 			break;
 		}
 	}

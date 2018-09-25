@@ -13,16 +13,14 @@
 SampleSource::SampleSource()
 	: Thread("")
 {
-	startThread();
 	format_manager_.registerBasicFormats();
+	startThread();
 }
 
 SampleSource::~SampleSource() 
 {
 	current_buffer_ = nullptr;
 	stopThread(500);
-
-	state_ = PlaybackState::Stopped;
 }
 
 void SampleSource::getNextAudioBlock(const AudioSourceChannelInfo& buffer_to_fill)
@@ -84,6 +82,24 @@ void SampleSource::run()
 		check_for_path_to_open();
 		free_stale_buffers();
 		wait(500);
+	}
+}
+
+void SampleSource::start()
+{
+	if (!is_playing_)
+	{
+		is_playing_ = true;
+		sendChangeMessage();
+	}
+}
+
+void SampleSource::stop()
+{
+	if (is_playing_)
+	{
+		is_playing_ = false;
+		sendChangeMessage();
 	}
 }
 

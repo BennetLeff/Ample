@@ -10,6 +10,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "SampleSource.h"
+#include "Sequencer.h"
 
 //==============================================================================
 /*
@@ -19,24 +20,19 @@
 class MainComponent   : public AudioAppComponent, public ChangeListener
 {
 public:
-    //==============================================================================
     MainComponent();
     ~MainComponent();
 
-    //==============================================================================
 	void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override;
     void getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill) override;
     void releaseResources() override;
 
-    //==============================================================================
     void paint (Graphics& g) override;
     void resized() override;
 
 	void changeListenerCallback(ChangeBroadcaster* source) override;
 
 private:
-    //==============================================================================
-
 	enum class TransportState
 	{
 		Stopped,
@@ -50,6 +46,7 @@ private:
 	TextButton stop_button_;
 
 	SampleSource sampler_source_;
+	Sequencer sequencer_;
 
 	void change_state(TransportState new_state);
 	void open_button_clicked();
