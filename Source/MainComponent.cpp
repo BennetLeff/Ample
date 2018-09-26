@@ -38,9 +38,9 @@ MainComponent::MainComponent()
 
 MainComponent::~MainComponent()
 {
-    // This shuts down the audio device and clears the audio source.
-	// Setting current_buffer_ to nullptr is all the clean up we need.
     shutdownAudio();
+	sampler_source_.releaseResources();
+	sequencer_.stop();
 }
 
 void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRate)
@@ -94,9 +94,10 @@ void MainComponent::changeListenerCallback(ChangeBroadcaster * source)
 
 	else if (source == &sequencer_)
 	{
-		if (sequencer_.play_at_current_trigger_ && state_ == TransportState::Playing)
+		if (sequencer_.play_at_current_trigger_)
 		{ 
 			Logger::writeToLog("On");
+			// sampler_source_.set_position(0.0);
 			sampler_source_.start();
 		}
 		else

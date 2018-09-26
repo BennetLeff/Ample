@@ -51,7 +51,7 @@ void SampleSource::getNextAudioBlock(const AudioSourceChannelInfo& buffer_to_fil
 
 	while (out_samples_remaining > 0)
 	{
-		int buffer_samples_remaining = cur_audio_sampler_buffer->getNumSamples() - get_position();
+		int buffer_samples_remaining = cur_audio_sampler_buffer->getNumSamples() - position_;
 		int samples_this_iter = jmin(out_samples_remaining, buffer_samples_remaining);
 
 		for (int channel = 0; channel < num_out_channels; ++channel)
@@ -60,15 +60,15 @@ void SampleSource::getNextAudioBlock(const AudioSourceChannelInfo& buffer_to_fil
 				buffer_to_fill.startSample + out_samples_offset,
 				*(cur_audio_sampler_buffer),
 				channel % num_in_channels,
-				get_position(),
+				position_,
 				samples_this_iter);
 		}
 	
 		out_samples_remaining -= samples_this_iter;
 		out_samples_offset += samples_this_iter;
-		set_position( get_position() + samples_this_iter );
+		set_position(position_ + samples_this_iter); 
 
-		if (get_position() == cur_audio_sampler_buffer->getNumSamples())
+		if (position_ == cur_audio_sampler_buffer->getNumSamples())
 			set_position(0);
 	}
 
@@ -89,6 +89,10 @@ void SampleSource::start()
 {
 	if (!is_playing_)
 	{
+		/* 
+		 * Once is_playing_ is set to true, the getNextAudioBlock method should
+		 * be able to start playing audio. 
+		 */
 		is_playing_ = true;
 		sendChangeMessage();
 	}
@@ -163,6 +167,13 @@ void SampleSource::set_size(int num_channels, int num_samples)
 	{
 		(*buffer)->setSize(num_channels, num_samples);
 	}
+}
+
+void SampleSource::set_position(double pos)
+{
+	// if (current_buffer_)
+	//	current_buffer_->position_ = pos;
+	position_ = pos;
 }
 
 void SampleSource::prepareToPlay(int samples_per_block_expected, double sample_rate)
