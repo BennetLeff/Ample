@@ -2,7 +2,7 @@
 #include "Sequencer.h"
 
 MainComponent::MainComponent()
-	: state_(TransportState::Stopped),
+	: state_(PlayState::Stopped),
 	sequencer_(16, 120.0)
 {
     // specify the number of input and output channels that we want to open
@@ -87,9 +87,9 @@ void MainComponent::changeListenerCallback(ChangeBroadcaster * source)
 	if (source == &sampler_source_)
 	{
 		if (sampler_source_.is_playing())
-			change_state(TransportState::Playing);
+			change_state(PlayState::Playing);
 		else
-			change_state(TransportState::Stopped);
+			change_state(PlayState::Stopped);
 	}
 
 	else if (source == &sequencer_)
@@ -109,28 +109,28 @@ void MainComponent::changeListenerCallback(ChangeBroadcaster * source)
 	}
 }
 
-void MainComponent::change_state(TransportState new_state)
+void MainComponent::change_state(PlayState new_state)
 {
 	if (state_ != new_state)
 	{
 		state_ = new_state;
 		switch (state_)
 		{
-		case TransportState::Stopped:                          
+		case PlayState::Stopped:                          
 			stop_button_.setEnabled(false);
 			play_button_.setEnabled(true);
 			sampler_source_.set_position(0.0);
 			sampler_source_.set_playing(false);
 			break;
-		case TransportState::Starting:                          
+		case PlayState::Starting:                          
 			play_button_.setEnabled(false);
-			sampler_source_.start();
+			// sampler_source_.start();
 			stop_button_.setEnabled(true);
 			break;
-		case TransportState::Playing:                           
+		case PlayState::Playing:                           
 			stop_button_.setEnabled(true);
 			break;
-		case TransportState::Stopping:                          
+		case PlayState::Stopping:                          
 			play_button_.setEnabled(true);
 			sampler_source_.stop();
 			break;
@@ -140,12 +140,12 @@ void MainComponent::change_state(TransportState new_state)
 
 void MainComponent::play_button_clicked()
 {
-	change_state(TransportState::Starting);
+	change_state(PlayState::Starting);
 }
 
 void MainComponent::stop_button_clicked()
 {
-	change_state(TransportState::Stopping);
+	change_state(PlayState::Stopping);
 }
 
 void MainComponent::open_button_clicked()
@@ -163,6 +163,6 @@ void MainComponent::open_button_clicked()
 	}
 
 	// This should not be stopping but for now it will do.
-	change_state(TransportState::Stopping);
+	change_state(PlayState::Stopping);
 	sampler_source_.set_playing(false);
 }

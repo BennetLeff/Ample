@@ -69,7 +69,12 @@ void SampleSource::getNextAudioBlock(const AudioSourceChannelInfo& buffer_to_fil
 		set_position(position_ + samples_this_iter); 
 
 		if (position_ == cur_audio_sampler_buffer->getNumSamples())
+		{
 			set_position(0);
+			is_playing_ = false;
+			buffer_to_fill.clearActiveBufferRegion();
+			return;
+		}
 	}
 
 	retained_current_buffer->position_ = position;

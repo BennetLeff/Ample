@@ -33,7 +33,7 @@ public:
 	void changeListenerCallback(ChangeBroadcaster* source) override;
 
 private:
-	enum class TransportState
+	enum class PlayState
 	{
 		Stopped,
 		Starting,
@@ -48,7 +48,7 @@ private:
 	SampleSource sampler_source_;
 	Sequencer sequencer_;
 
-	void change_state(TransportState new_state);
+	void change_state(PlayState new_state);
 	void open_button_clicked();
 	void play_button_clicked();
 	void stop_button_clicked();
