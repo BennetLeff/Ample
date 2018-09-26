@@ -8,10 +8,15 @@ MainComponent::MainComponent()
     // specify the number of input and output channels that we want to open
     setAudioChannels (0, 2);
 
-	addAndMakeVisible(&open_button_);
-	open_button_.setButtonText("Open...");
+	addAndMakeVisible(&open_button_kick_);
+	open_button_kick_.setButtonText("Open Kick...");
 	// this data should be passed to the sampler_source but HOW!?
-	open_button_.onClick = [this] { open_button_clicked(); };
+	open_button_kick_.onClick = [this] { open_button_kick_clicked(); };
+	
+	addAndMakeVisible(&open_button_snare_);
+	open_button_snare_.setButtonText("Open Snare...");
+	// this data should be passed to the sampler_source but HOW!?
+	open_button_snare_.onClick = [this] { open_button_snare_clicked(); };
 	
 	addAndMakeVisible(&play_button_);
 	play_button_.setButtonText("Play");
@@ -26,10 +31,12 @@ MainComponent::MainComponent()
 	stop_button_.setColour(TextButton::buttonColourId, Colours::red);
 	stop_button_.setEnabled(false);
 	
-	sampler_source_.addChangeListener(this);
+	sampler_source_kick_.addChangeListener(this);
+	sampler_source_snare_.addChangeListener(this);
 	sequencer_.addChangeListener(this);
 
 	sequencer_.update_trigger(true, 0); sequencer_.update_trigger(true, 4); sequencer_.update_trigger(true, 8); sequencer_.update_trigger(true, 12);
+	sequencer_.update_trigger(true, 1); sequencer_.update_trigger(true, 5); sequencer_.update_trigger(true, 9); sequencer_.update_trigger(true, 13);
 
 	// Make sure you set the size of the component after
 	// you add any child components.
@@ -39,29 +46,39 @@ MainComponent::MainComponent()
 MainComponent::~MainComponent()
 {
     shutdownAudio();
-	sampler_source_.releaseResources();
+	sampler_source_kick_.releaseResources();
+	sampler_source_snare_.releaseResources();
 	sequencer_.stop();
 }
 
 void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRate)
 {
-	sampler_source_.prepareToPlay(samplesPerBlockExpected, sampleRate);
+	sampler_source_kick_.prepareToPlay(samplesPerBlockExpected, sampleRate);
+	sampler_source_snare_.prepareToPlay(samplesPerBlockExpected, sampleRate);
+	mixer_source_.prepareToPlay(samplesPerBlockExpected, sampleRate);
+
+	mixer_source_.addInputSource(&sampler_source_kick_, false);
+	mixer_source_.addInputSource(&sampler_source_snare_, false);
 }
 
 void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill)
 {
-	if (sampler_source_.is_empty())
+	if (sampler_source_kick_.is_empty() || sampler_source_snare_.is_empty())
 	{
 		bufferToFill.clearActiveBufferRegion();
 		return;
 	}
 
-	sampler_source_.getNextAudioBlock(bufferToFill);
+	// sampler_source_kick_.getNextAudioBlock(bufferToFill);
+	// sampler_source_snare_.getNextAudioBlock(bufferToFill);
+	mixer_source_.getNextAudioBlock(bufferToFill);
 }
 
 void MainComponent::releaseResources()
 {
-	sampler_source_.releaseResources();
+	mixer_source_.releaseResources();
+	sampler_source_kick_.releaseResources();
+	sampler_source_snare_.releaseResources();
 }
 
 void MainComponent::paint (Graphics& g)
@@ -77,16 +94,17 @@ void MainComponent::resized()
     // This is called when the MainContentComponent is resized.
     // If you add any child components, this is where you should
     // update their positions.
-	open_button_.setBounds(10, 10, getWidth() - 20, 20);
-	play_button_.setBounds(10, 40, getWidth() - 20, 20);
-	stop_button_.setBounds(10, 70, getWidth() - 20, 20);
+	open_button_kick_.setBounds(10, 10, getWidth() - 20, 20);
+	open_button_snare_.setBounds(10, 40, getWidth() - 20, 20);
+	play_button_.setBounds(10, 70, getWidth() - 20, 20);
+	stop_button_.setBounds(10, 100, getWidth() - 20, 20);
 }
 
 void MainComponent::changeListenerCallback(ChangeBroadcaster * source)
 {
-	if (source == &sampler_source_)
+	if (source == &sampler_source_kick_)
 	{
-		if (sampler_source_.is_playing())
+		if (sampler_source_kick_.is_playing())
 			change_state(PlayState::Playing);
 		else
 			change_state(PlayState::Stopped);
@@ -94,17 +112,26 @@ void MainComponent::changeListenerCallback(ChangeBroadcaster * source)
 
 	else if (source == &sequencer_)
 	{
-		if (sequencer_.play_at_current_trigger_)
+		bool even_step = sequencer_.current_step() % 2 == 0;
+		if (sequencer_.play_at_current_trigger_ && !even_step)
 		{ 
 			Logger::writeToLog("On");
 			// sampler_source_.set_position(0.0);
-			sampler_source_.start();
+			sampler_source_kick_.start();
+		}
+		else if (sequencer_.play_at_current_trigger_ && even_step)
+		{
+			Logger::writeToLog("On");
+			// sampler_source_.set_position(0.0);
+			sampler_source_snare_.start();
 		}
 		else
 		{
-			sampler_source_.stop();
+			sampler_source_kick_.stop();
+			sampler_source_snare_.stop();
 			Logger::writeToLog("Off");
-			sampler_source_.set_position(0.0);
+			sampler_source_kick_.set_position(0.0);
+			sampler_source_snare_.set_position(0.0);
 		}
 	}
 }
@@ -119,12 +146,11 @@ void MainComponent::change_state(PlayState new_state)
 		case PlayState::Stopped:                          
 			stop_button_.setEnabled(false);
 			play_button_.setEnabled(true);
-			sampler_source_.set_position(0.0);
-			sampler_source_.set_playing(false);
+			sampler_source_kick_.set_position(0.0);
+			sampler_source_kick_.set_playing(false);
 			break;
 		case PlayState::Starting:                          
 			play_button_.setEnabled(false);
-			// sampler_source_.start();
 			stop_button_.setEnabled(true);
 			break;
 		case PlayState::Playing:                           
@@ -132,7 +158,7 @@ void MainComponent::change_state(PlayState new_state)
 			break;
 		case PlayState::Stopping:                          
 			play_button_.setEnabled(true);
-			sampler_source_.stop();
+			sampler_source_kick_.stop();
 			break;
 		}
 	}
@@ -148,7 +174,7 @@ void MainComponent::stop_button_clicked()
 	change_state(PlayState::Stopping);
 }
 
-void MainComponent::open_button_clicked()
+void MainComponent::open_button_kick_clicked()
 {
 	FileChooser chooser("Select a WAV file to play... ",
 		File::nonexistent,
@@ -158,11 +184,30 @@ void MainComponent::open_button_clicked()
 	{
 		auto file = chooser.getResult();
 		auto path = file.getFullPathName();
-		sampler_source_.set_file_path(path);
-		sampler_source_.notify();
+		sampler_source_kick_.set_file_path(path);
+		sampler_source_kick_.notify();
 	}
 
 	// This should not be stopping but for now it will do.
 	change_state(PlayState::Stopping);
-	sampler_source_.set_playing(false);
+	sampler_source_kick_.set_playing(false);
+}
+
+void MainComponent::open_button_snare_clicked()
+{
+	FileChooser chooser("Select a WAV file to play... ",
+		File::nonexistent,
+		"*.wav");
+
+	if (chooser.browseForFileToOpen())
+	{
+		auto file = chooser.getResult();
+		auto path = file.getFullPathName();
+		sampler_source_snare_.set_file_path(path);
+		sampler_source_snare_.notify();
+	}
+
+	// This should not be stopping but for now it will do.
+	change_state(PlayState::Stopping);
+	sampler_source_snare_.set_playing(false);
 }

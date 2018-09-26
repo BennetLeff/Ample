@@ -41,15 +41,19 @@ private:
 		Stopping
 	} state_;
 
-	TextButton open_button_;
+	TextButton open_button_kick_;
+	TextButton open_button_snare_;
 	TextButton play_button_;
 	TextButton stop_button_;
 
-	SampleSource sampler_source_;
+	SampleSource sampler_source_kick_;
+	SampleSource sampler_source_snare_;
+	MixerAudioSource mixer_source_;
 	Sequencer sequencer_;
 
 	void change_state(PlayState new_state);
-	void open_button_clicked();
+	void open_button_kick_clicked(); 
+	void open_button_snare_clicked();
 	void play_button_clicked();
 	void stop_button_clicked();
 
