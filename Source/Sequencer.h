@@ -39,7 +39,7 @@ public:
 	void update_trigger(bool event, int step_number);
 	void clear_trigger(int step_number);
 	void update_tempo(double new_tempo);
-	int current_step() { return step_index_; }
+	uint16_t current_step() { return step_index_; }
 
 	bool play_at_current_trigger_ = false;
 private:
@@ -48,11 +48,6 @@ private:
 
 	std::vector<bool> steps_{ false };
 	double tempo_; // aka BPM
-	double sleep_amount_ = 60.0 / tempo_;
+	double sleep_amount_ = tempo_ > 0 ? 60.0 / tempo_ : 0;
 	uint16_t step_index_; // Which step are we on in the sequencer.
-
-	enum class SequencerState {
-		Stopped,
-		Playing,
-	} state_;
 };

@@ -8,8 +8,6 @@
   ==============================================================================
 */
 
-#include <chrono>
-#include <iostream>
 #include <memory>
 #include <thread>
 
@@ -29,7 +27,6 @@ Sequencer::Sequencer(const size_t number_of_steps, const double tempo)
 
 Sequencer::~Sequencer()
 {
-	state_ = SequencerState::Stopped;
 	stopThread(500);
 }
 
@@ -47,17 +44,16 @@ void Sequencer::update_trigger(bool event, int step_number)
 
 void Sequencer::clear_trigger(int step_number)
 {
-	steps_.at(step_number) = false; // Event([]() {});
+	steps_.at(step_number) = false;
 }
 
 void Sequencer::step()
 {
-	step_index_ = (step_index_ + 1) % 16;
+	step_index_ = (step_index_ + 1) % steps_.size();
 }
 
 void Sequencer::stop()
 {
-	state_ = SequencerState::Stopped;
 	stopThread(500);
 }
 

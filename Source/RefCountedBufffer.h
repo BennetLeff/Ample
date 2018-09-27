@@ -19,7 +19,8 @@ class RefCountedBuffer : public ReferenceCountedObject {
  public:
   typedef ReferenceCountedObjectPtr<RefCountedBuffer> Ptr;
   RefCountedBuffer(const String& name_to_use, int num_channels, int num_samples)
-      : name_(name_to_use) {
+      : name_(name_to_use)
+  {
     buffer_ = std::make_shared<AudioSampleBuffer>(num_channels, num_samples);
   }
 

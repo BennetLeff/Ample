@@ -92,11 +92,12 @@ void SampleSource::run()
 
 void SampleSource::start()
 {
-	if (!is_playing_)
+	if (!is_playing_ && !is_empty())
 	{
 		/* 
 		 * Once is_playing_ is set to true, the getNextAudioBlock method should
-		 * be able to start playing audio. 
+		 * be able to start playing audio. If is_playing_ is false, it will return
+		 * and clear the active audio buffer.
 		 */
 		is_playing_ = true;
 		sendChangeMessage();
@@ -108,6 +109,7 @@ void SampleSource::stop()
 	if (is_playing_)
 	{
 		is_playing_ = false;
+		position_ = 0.0;
 		sendChangeMessage();
 	}
 }
@@ -176,8 +178,6 @@ void SampleSource::set_size(int num_channels, int num_samples)
 
 void SampleSource::set_position(double pos)
 {
-	// if (current_buffer_)
-	//	current_buffer_->position_ = pos;
 	position_ = pos;
 }
 

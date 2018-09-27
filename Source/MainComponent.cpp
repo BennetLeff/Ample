@@ -1,9 +1,12 @@
 #include "MainComponent.h"
 #include "Sequencer.h"
 
+#include <vector>
+#include <algorithm>
+
 MainComponent::MainComponent()
 	: state_(PlayState::Stopped),
-	sequencer_(16, 120.0)
+	sequencer_(8, 120.0)
 {
     // specify the number of input and output channels that we want to open
     setAudioChannels (0, 2);
@@ -18,12 +21,19 @@ MainComponent::MainComponent()
 	// this data should be passed to the sampler_source but HOW!?
 	open_button_snare_.onClick = [this] { open_button_snare_clicked(); };
 	
+	/* Define sample assignment buttons. */
+	for (auto& button : sample_assigners_)
+	{
+		addAndMakeVisible(button);
+		button.setColour(TextButton::buttonColourId, Colours::greenyellow);
+	}
+
+
 	addAndMakeVisible(&play_button_);
 	play_button_.setButtonText("Play");
 	play_button_.onClick = [this] { play_button_clicked(); };
 	play_button_.setColour(TextButton::buttonColourId, Colours::green);
 	play_button_.setEnabled(false);
-
 
 	addAndMakeVisible(&stop_button_);
 	stop_button_.setButtonText("Stop");
@@ -34,9 +44,6 @@ MainComponent::MainComponent()
 	sampler_source_kick_.addChangeListener(this);
 	sampler_source_snare_.addChangeListener(this);
 	sequencer_.addChangeListener(this);
-
-	sequencer_.update_trigger(true, 0); sequencer_.update_trigger(true, 4); sequencer_.update_trigger(true, 8); sequencer_.update_trigger(true, 12);
-	sequencer_.update_trigger(true, 1); sequencer_.update_trigger(true, 5); sequencer_.update_trigger(true, 9); sequencer_.update_trigger(true, 13);
 
 	// Make sure you set the size of the component after
 	// you add any child components.
@@ -69,8 +76,6 @@ void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFil
 		return;
 	}
 
-	// sampler_source_kick_.getNextAudioBlock(bufferToFill);
-	// sampler_source_snare_.getNextAudioBlock(bufferToFill);
 	mixer_source_.getNextAudioBlock(bufferToFill);
 }
 
@@ -96,8 +101,16 @@ void MainComponent::resized()
     // update their positions.
 	open_button_kick_.setBounds(10, 10, getWidth() - 20, 20);
 	open_button_snare_.setBounds(10, 40, getWidth() - 20, 20);
+
 	play_button_.setBounds(10, 70, getWidth() - 20, 20);
 	stop_button_.setBounds(10, 100, getWidth() - 20, 20);
+
+	int i = 200;
+	for (auto& button : sample_assigners_)
+	{
+		button.setBounds(i, 200, 40, 40);
+		i += 50;
+	}
 }
 
 void MainComponent::changeListenerCallback(ChangeBroadcaster * source)
@@ -115,24 +128,20 @@ void MainComponent::changeListenerCallback(ChangeBroadcaster * source)
 		bool even_step = sequencer_.current_step() % 2 == 0;
 		if (sequencer_.play_at_current_trigger_ && !even_step)
 		{ 
-			Logger::writeToLog("On");
-			// sampler_source_.set_position(0.0);
 			sampler_source_kick_.start();
 		}
 		else if (sequencer_.play_at_current_trigger_ && even_step)
 		{
-			Logger::writeToLog("On");
-			// sampler_source_.set_position(0.0);
 			sampler_source_snare_.start();
 		}
 		else
 		{
 			sampler_source_kick_.stop();
 			sampler_source_snare_.stop();
-			Logger::writeToLog("Off");
-			sampler_source_kick_.set_position(0.0);
-			sampler_source_snare_.set_position(0.0);
 		}
+
+		/* Handle button drawing here... */
+		trigger_button_color(sequencer_.current_step());
 	}
 }
 
@@ -210,4 +219,19 @@ void MainComponent::open_button_snare_clicked()
 	// This should not be stopping but for now it will do.
 	change_state(PlayState::Stopping);
 	sampler_source_snare_.set_playing(false);
+}
+
+void MainComponent::trigger_button_color(uint16_t step_to_update)
+{
+	// if we're not updating the first step we can just set the previous step to the old color.
+	if (step_to_update != 0)
+	{
+		sample_assigners_.at(step_to_update - 1).setColour(TextButton::buttonColourId, Colours::greenyellow);
+		sample_assigners_.at(step_to_update).setColour(TextButton::buttonColourId, Colours::tomato);
+	}
+	else
+	{
+		sample_assigners_.at(sample_assigners_.size() - 1).setColour(TextButton::buttonColourId, Colours::greenyellow);
+		sample_assigners_.at(step_to_update).setColour(TextButton::buttonColourId, Colours::tomato);
+	}
 }
