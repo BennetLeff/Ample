@@ -16,6 +16,33 @@
 
 #define NUM_SEQUENCER_STEPS 8
 
+/* Small utility class only used for drawing buttons on gui. */
+class SequencerButton : public TextButton
+{
+public:
+	void toggle_on_off_colour() 
+	{
+		if (is_on_)
+			setColour(TextButton::buttonColourId, on_colour_);
+		else 
+			setColour(TextButton::buttonColourId, off_colour_);
+	}
+
+	void trigger_sequencer_colour()
+	{
+		/* Changes the colour when the sequencer step is on this particular button. */
+		setColour(TextButton::buttonColourId, triggered_colour_);
+	}
+
+	bool is_on_ = false;
+
+private:
+	Colour on_colour_ = Colour(Colours::yellow);
+	Colour off_colour_ = Colour(Colours::greenyellow);
+	Colour triggered_colour_ = Colour(Colours::tomato);
+};
+
+
 //==============================================================================
 /*
     This component lives inside our window, and this is where you should put all
@@ -47,7 +74,7 @@ private:
 	TextButton open_button_kick_;
 	TextButton open_button_snare_;
 
-	std::array<std::unique_ptr<TextButton>, 8> sample_assigners_;
+	std::array<std::unique_ptr<SequencerButton>, 8> sample_assigners_;
 
 	TextButton play_button_;
 	TextButton stop_button_;

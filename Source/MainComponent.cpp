@@ -24,9 +24,15 @@ MainComponent::MainComponent()
 	/* Define sample assignment buttons. */
 	for (auto& button : sample_assigners_)
 	{
-		button = std::make_unique<TextButton>();
+		button = std::make_unique<SequencerButton>();
 		addAndMakeVisible(button.get());
 		button->setColour(TextButton::buttonColourId, Colours::greenyellow);
+		button->is_on_ = false;
+
+		button->onClick = [&button] {
+			button->is_on_ = !button->is_on_;
+			button->toggle_on_off_colour();
+		};
 	}
 
 
@@ -226,9 +232,9 @@ void MainComponent::trigger_button_color(uint16_t step_to_update)
 {
 	// if we're not updating the first step we can just set the previous step to the old color.
 	if (step_to_update != 0)
-		sample_assigners_.at(step_to_update - 1)->setColour(TextButton::buttonColourId, Colours::greenyellow);
+		sample_assigners_.at(step_to_update - 1)->toggle_on_off_colour();
 	else
-		sample_assigners_.at(sample_assigners_.size() - 1)->setColour(TextButton::buttonColourId, Colours::greenyellow);
+		sample_assigners_.at(sample_assigners_.size() - 1)->toggle_on_off_colour();
 		
-	sample_assigners_.at(step_to_update)->setColour(TextButton::buttonColourId, Colours::tomato);
+	sample_assigners_.at(step_to_update)->trigger_sequencer_colour();
 }
