@@ -24,8 +24,9 @@ MainComponent::MainComponent()
 	/* Define sample assignment buttons. */
 	for (auto& button : sample_assigners_)
 	{
-		addAndMakeVisible(button);
-		button.setColour(TextButton::buttonColourId, Colours::greenyellow);
+		button = std::make_unique<TextButton>();
+		addAndMakeVisible(button.get());
+		button->setColour(TextButton::buttonColourId, Colours::greenyellow);
 	}
 
 
@@ -108,7 +109,7 @@ void MainComponent::resized()
 	int i = 200;
 	for (auto& button : sample_assigners_)
 	{
-		button.setBounds(i, 200, 40, 40);
+		button->setBounds(i, 200, 40, 40);
 		i += 50;
 	}
 }
@@ -225,13 +226,9 @@ void MainComponent::trigger_button_color(uint16_t step_to_update)
 {
 	// if we're not updating the first step we can just set the previous step to the old color.
 	if (step_to_update != 0)
-	{
-		sample_assigners_.at(step_to_update - 1).setColour(TextButton::buttonColourId, Colours::greenyellow);
-		sample_assigners_.at(step_to_update).setColour(TextButton::buttonColourId, Colours::tomato);
-	}
+		sample_assigners_.at(step_to_update - 1)->setColour(TextButton::buttonColourId, Colours::greenyellow);
 	else
-	{
-		sample_assigners_.at(sample_assigners_.size() - 1).setColour(TextButton::buttonColourId, Colours::greenyellow);
-		sample_assigners_.at(step_to_update).setColour(TextButton::buttonColourId, Colours::tomato);
-	}
+		sample_assigners_.at(sample_assigners_.size() - 1)->setColour(TextButton::buttonColourId, Colours::greenyellow);
+		
+	sample_assigners_.at(step_to_update)->setColour(TextButton::buttonColourId, Colours::tomato);
 }

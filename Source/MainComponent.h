@@ -47,7 +47,7 @@ private:
 	TextButton open_button_kick_;
 	TextButton open_button_snare_;
 
-	std::array<TextButton, 8> sample_assigners_;
+	std::array<std::unique_ptr<TextButton>, 8> sample_assigners_;
 
 	TextButton play_button_;
 	TextButton stop_button_;
