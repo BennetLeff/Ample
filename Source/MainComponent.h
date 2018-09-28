@@ -1,96 +1,13 @@
-/*
-  ==============================================================================
-
-    This file was auto-generated!
-
-  ==============================================================================
-*/
-
 #pragma once
-
-#include "../JuceLibraryCode/JuceHeader.h"
-#include "SampleSource.h"
-#include "Sequencer.h"
 
 #include <array>
 
-#define NUM_SEQUENCER_STEPS 8
+#include "JuceHeader.h"
 
-/* Small utility class only used for drawing buttons on gui. */
-class SequencerButton : public TextButton
-{
-public:
-	void toggle_on_off_colour() 
-	{
-		if (is_on_)
-			setColour(TextButton::buttonColourId, on_colour_);
-		else 
-			setColour(TextButton::buttonColourId, off_colour_);
-	}
+#include "SampleSource.h"
+#include "Sequencer.h"
+#include "SequencerTrack.h"
 
-	void trigger_sequencer_colour()
-	{
-		/* Changes the colour when the sequencer step is on this particular button. */
-		setColour(TextButton::buttonColourId, triggered_colour_);
-	}
-
-	bool is_on_ = false;
-
-private:
-	Colour on_colour_ = Colour(Colours::yellow);
-	Colour off_colour_ = Colour(Colours::greenyellow);
-	Colour triggered_colour_ = Colour(Colours::tomato);
-};
-
-struct SequencerGridRow
-{
-public:
-	SequencerGridRow()
-	{
-		for (auto& button : sample_assigners_)
-		{
-			button = std::make_unique<SequencerButton>();
-			// addAndMakeVisible(button.get());
-			button->setColour(TextButton::buttonColourId, Colours::greenyellow);
-			button->is_on_ = false;
-
-			button->onClick = [&button] {
-				button->is_on_ = !button->is_on_;
-				button->toggle_on_off_colour();
-			};
-		}
-	}
-
-	bool is_step_on(uint16_t step)
-	{
-		return sample_assigners_.at(step)->is_on_;
-	}
-
-	void update_trigger_button_colours(uint16_t step_to_update)
-	{
-		if (step_to_update != 0)
-			sample_assigners_.at(step_to_update - 1)->toggle_on_off_colour();
-		else
-			sample_assigners_.at(sample_assigners_.size() - 1)->toggle_on_off_colour();
-
-		sample_assigners_.at(step_to_update)->trigger_sequencer_colour();
-	}
-
-	void position_triggers(uint16_t y_offset = 0)
-	{
-		int i = 200;
-		for (auto& button : sample_assigners_)
-		{
-			button->setBounds(i, 200 + y_offset, 40, 40);
-			i += 50;
-		}
-	}
-
-	std::array<std::unique_ptr<SequencerButton>, NUM_SEQUENCER_STEPS> sample_assigners_;
-};
-
-
-//==============================================================================
 /*
     This component lives inside our window, and this is where you should put all
     your controls and content.
@@ -129,8 +46,8 @@ private:
 	Sequencer sequencer_;
 
 	std::array<std::unique_ptr<SequencerButton>, NUM_SEQUENCER_STEPS> sample_assigners_;
-	SequencerGridRow grid_row_kick_{};
-	SequencerGridRow grid_row_snare_{};
+	SequencerTrack grid_row_kick_{};
+	SequencerTrack grid_row_snare_{};
 
 
 	void change_state(PlayState new_state);

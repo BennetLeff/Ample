@@ -122,7 +122,7 @@ void MainComponent::changeListenerCallback(ChangeBroadcaster * source)
 		{
 			sampler_source_kick_.start();
 		}
-		else if (grid_row_snare_.is_step_on(cur_step))
+		if (grid_row_snare_.is_step_on(cur_step))
 		{
 			sampler_source_snare_.start();
 		}

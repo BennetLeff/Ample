@@ -3,6 +3,10 @@
 <JUCERPROJECT id="ygnE0y" name="Ample" projectType="guiapp" jucerVersion="5.3.2">
   <MAINGROUP id="o8r0V8" name="Ample">
     <GROUP id="{C9D16EC9-1DA3-B295-8E67-8610DC845B91}" name="Source">
+      <FILE id="npVbr6" name="SequencerTrack.cpp" compile="1" resource="0"
+            file="Source/SequencerTrack.cpp"/>
+      <FILE id="An0Tiu" name="SequencerTrack.h" compile="0" resource="0"
+            file="Source/SequencerTrack.h"/>
       <FILE id="LrbDAp" name="Sequencer.cpp" compile="1" resource="0" file="Source/Sequencer.cpp"/>
       <FILE id="qNaAFS" name="Sequencer.h" compile="0" resource="0" file="Source/Sequencer.h"/>
       <FILE id="sMRnjq" name="RefCountedBufffer.cpp" compile="1" resource="0"
