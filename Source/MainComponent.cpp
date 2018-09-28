@@ -22,7 +22,11 @@ MainComponent::MainComponent()
 	open_button_snare_.onClick = [this] { open_button_snare_clicked(); };
 	
 	/* Define sample assignment buttons. */
-	setup_trigger_buttons(sample_assigners_);
+	for (auto& button : grid_row_.sample_assigners_)
+		addAndMakeVisible(button.get());
+	
+	for (auto& button : grid_row_snare_.sample_assigners_)
+		addAndMakeVisible(button.get());
 
 	addAndMakeVisible(&play_button_);
 	play_button_.setButtonText("Play");
@@ -100,12 +104,8 @@ void MainComponent::resized()
 	play_button_.setBounds(10, 70, getWidth() - 20, 20);
 	stop_button_.setBounds(10, 100, getWidth() - 20, 20);
 
-	int i = 200;
-	for (auto& button : sample_assigners_)
-	{
-		button->setBounds(i, 200, 40, 40);
-		i += 50;
-	}
+	grid_row_.position_triggers();
+	grid_row_snare_.position_triggers(140);
 }
 
 void MainComponent::changeListenerCallback(ChangeBroadcaster * source)
@@ -136,7 +136,8 @@ void MainComponent::changeListenerCallback(ChangeBroadcaster * source)
 		}
 
 		/* Handle button drawing here... */
-		trigger_button_color(sequencer_.current_step());
+		grid_row_.update_trigger_button_colours(sequencer_.current_step());
+		grid_row_snare_.update_trigger_button_colours(sequencer_.current_step());
 	}
 }
 
@@ -211,34 +212,7 @@ void MainComponent::play_button_clicked()
 	change_state(PlayState::Starting);
 }
 
-void MainComponent::setup_trigger_buttons(std::array<std::unique_ptr<SequencerButton>, NUM_SEQUENCER_STEPS>& button_array)
-{
-	for (auto& button : button_array)
-	{
-		button = std::make_unique<SequencerButton>();
-		addAndMakeVisible(button.get());
-		button->setColour(TextButton::buttonColourId, Colours::greenyellow);
-		button->is_on_ = false;
-
-		button->onClick = [&button] {
-			button->is_on_ = !button->is_on_;
-			button->toggle_on_off_colour();
-		};
-	}
-}
-
 void MainComponent::stop_button_clicked()
 {
 	change_state(PlayState::Stopping);
-}
-
-void MainComponent::trigger_button_color(uint16_t step_to_update)
-{
-	// if we're not updating the first step we can just set the previous step to the old color.
-	if (step_to_update != 0)
-		sample_assigners_.at(step_to_update - 1)->toggle_on_off_colour();
-	else
-		sample_assigners_.at(sample_assigners_.size() - 1)->toggle_on_off_colour();
-		
-	sample_assigners_.at(step_to_update)->trigger_sequencer_colour();
 }

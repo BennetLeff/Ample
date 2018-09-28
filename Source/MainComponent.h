@@ -42,6 +42,48 @@ private:
 	Colour triggered_colour_ = Colour(Colours::tomato);
 };
 
+struct SequencerGridRow
+{
+public:
+	SequencerGridRow()
+	{
+		for (auto& button : sample_assigners_)
+		{
+			button = std::make_unique<SequencerButton>();
+			// addAndMakeVisible(button.get());
+			button->setColour(TextButton::buttonColourId, Colours::greenyellow);
+			button->is_on_ = false;
+
+			button->onClick = [&button] {
+				button->is_on_ = !button->is_on_;
+				button->toggle_on_off_colour();
+			};
+		}
+	}
+
+	void update_trigger_button_colours(uint16_t step_to_update)
+	{
+		if (step_to_update != 0)
+			sample_assigners_.at(step_to_update - 1)->toggle_on_off_colour();
+		else
+			sample_assigners_.at(sample_assigners_.size() - 1)->toggle_on_off_colour();
+
+		sample_assigners_.at(step_to_update)->trigger_sequencer_colour();
+	}
+
+	void position_triggers(uint16_t y_offset = 0)
+	{
+		int i = 200;
+		for (auto& button : sample_assigners_)
+		{
+			button->setBounds(i, 200 + y_offset, 40, 40);
+			i += 50;
+		}
+	}
+
+	std::array<std::unique_ptr<SequencerButton>, NUM_SEQUENCER_STEPS> sample_assigners_;
+};
+
 
 //==============================================================================
 /*
@@ -71,26 +113,28 @@ private:
 		Stopping
 	} state_;
 
-	TextButton open_button_kick_;
+	TextButton open_button_kick_; 
 	TextButton open_button_snare_;
-
-	std::array<std::unique_ptr<SequencerButton>, NUM_SEQUENCER_STEPS> sample_assigners_;
-
 	TextButton play_button_;
 	TextButton stop_button_;
 
+	MixerAudioSource mixer_source_;
 	SampleSource sampler_source_kick_;
 	SampleSource sampler_source_snare_;
-	MixerAudioSource mixer_source_;
 	Sequencer sequencer_;
+
+	std::array<std::unique_ptr<SequencerButton>, NUM_SEQUENCER_STEPS> sample_assigners_;
+	SequencerGridRow grid_row_{};
+	SequencerGridRow grid_row_snare_{};
+
 
 	void change_state(PlayState new_state);
 	void open_button_kick_clicked(); 
 	void open_button_snare_clicked();
 	void play_button_clicked();
-	void setup_trigger_buttons(std::array<std::unique_ptr<SequencerButton>, NUM_SEQUENCER_STEPS>& button_array);
+	// void initialize_trigger_buttons_array(std::array<std::unique_ptr<SequencerButton>, NUM_SEQUENCER_STEPS>& button_array);
 	void stop_button_clicked();
-	void trigger_button_color(uint16_t step_number);
+	// void trigger_button_color(uint16_t step_number);
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };
