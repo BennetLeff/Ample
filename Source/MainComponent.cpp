@@ -22,19 +22,7 @@ MainComponent::MainComponent()
 	open_button_snare_.onClick = [this] { open_button_snare_clicked(); };
 	
 	/* Define sample assignment buttons. */
-	for (auto& button : sample_assigners_)
-	{
-		button = std::make_unique<SequencerButton>();
-		addAndMakeVisible(button.get());
-		button->setColour(TextButton::buttonColourId, Colours::greenyellow);
-		button->is_on_ = false;
-
-		button->onClick = [&button] {
-			button->is_on_ = !button->is_on_;
-			button->toggle_on_off_colour();
-		};
-	}
-
+	setup_trigger_buttons(sample_assigners_);
 
 	addAndMakeVisible(&play_button_);
 	play_button_.setButtonText("Play");
@@ -180,16 +168,6 @@ void MainComponent::change_state(PlayState new_state)
 	}
 }
 
-void MainComponent::play_button_clicked()
-{
-	change_state(PlayState::Starting);
-}
-
-void MainComponent::stop_button_clicked()
-{
-	change_state(PlayState::Stopping);
-}
-
 void MainComponent::open_button_kick_clicked()
 {
 	FileChooser chooser("Select a WAV file to play... ",
@@ -226,6 +204,32 @@ void MainComponent::open_button_snare_clicked()
 	// This should not be stopping but for now it will do.
 	change_state(PlayState::Stopping);
 	sampler_source_snare_.set_playing(false);
+}
+
+void MainComponent::play_button_clicked()
+{
+	change_state(PlayState::Starting);
+}
+
+void MainComponent::setup_trigger_buttons(std::array<std::unique_ptr<SequencerButton>, NUM_SEQUENCER_STEPS>& button_array)
+{
+	for (auto& button : button_array)
+	{
+		button = std::make_unique<SequencerButton>();
+		addAndMakeVisible(button.get());
+		button->setColour(TextButton::buttonColourId, Colours::greenyellow);
+		button->is_on_ = false;
+
+		button->onClick = [&button] {
+			button->is_on_ = !button->is_on_;
+			button->toggle_on_off_colour();
+		};
+	}
+}
+
+void MainComponent::stop_button_clicked()
+{
+	change_state(PlayState::Stopping);
 }
 
 void MainComponent::trigger_button_color(uint16_t step_to_update)

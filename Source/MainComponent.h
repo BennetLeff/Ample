@@ -74,7 +74,7 @@ private:
 	TextButton open_button_kick_;
 	TextButton open_button_snare_;
 
-	std::array<std::unique_ptr<SequencerButton>, 8> sample_assigners_;
+	std::array<std::unique_ptr<SequencerButton>, NUM_SEQUENCER_STEPS> sample_assigners_;
 
 	TextButton play_button_;
 	TextButton stop_button_;
@@ -88,6 +88,7 @@ private:
 	void open_button_kick_clicked(); 
 	void open_button_snare_clicked();
 	void play_button_clicked();
+	void setup_trigger_buttons(std::array<std::unique_ptr<SequencerButton>, NUM_SEQUENCER_STEPS>& button_array);
 	void stop_button_clicked();
 	void trigger_button_color(uint16_t step_number);
 
