@@ -67,12 +67,7 @@ void Sequencer::run()
 }
 
 void Sequencer::play()
-{
-	auto current_step = steps_.at(step_index_);
-		
-	// current_step.execute();
-	play_at_current_trigger_ = current_step;
+{		
 	sendChangeMessage();
-
 	step();
 }

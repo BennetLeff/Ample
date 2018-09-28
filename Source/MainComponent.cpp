@@ -22,7 +22,7 @@ MainComponent::MainComponent()
 	open_button_snare_.onClick = [this] { open_button_snare_clicked(); };
 	
 	/* Define sample assignment buttons. */
-	for (auto& button : grid_row_.sample_assigners_)
+	for (auto& button : grid_row_kick_.sample_assigners_)
 		addAndMakeVisible(button.get());
 	
 	for (auto& button : grid_row_snare_.sample_assigners_)
@@ -52,9 +52,6 @@ MainComponent::MainComponent()
 MainComponent::~MainComponent()
 {
     shutdownAudio();
-	sampler_source_kick_.releaseResources();
-	sampler_source_snare_.releaseResources();
-	sequencer_.stop();
 }
 
 void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRate)
@@ -104,8 +101,8 @@ void MainComponent::resized()
 	play_button_.setBounds(10, 70, getWidth() - 20, 20);
 	stop_button_.setBounds(10, 100, getWidth() - 20, 20);
 
-	grid_row_.position_triggers();
-	grid_row_snare_.position_triggers(140);
+	grid_row_kick_.position_triggers();
+	grid_row_snare_.position_triggers(60);
 }
 
 void MainComponent::changeListenerCallback(ChangeBroadcaster * source)
@@ -120,12 +117,12 @@ void MainComponent::changeListenerCallback(ChangeBroadcaster * source)
 
 	else if (source == &sequencer_)
 	{
-		bool even_step = sequencer_.current_step() % 2 == 0;
-		if (sequencer_.play_at_current_trigger_ && !even_step)
-		{ 
+		uint16_t cur_step = sequencer_.current_step();
+		if (grid_row_kick_.is_step_on(cur_step))
+		{
 			sampler_source_kick_.start();
 		}
-		else if (sequencer_.play_at_current_trigger_ && even_step)
+		else if (grid_row_snare_.is_step_on(cur_step))
 		{
 			sampler_source_snare_.start();
 		}
@@ -136,7 +133,7 @@ void MainComponent::changeListenerCallback(ChangeBroadcaster * source)
 		}
 
 		/* Handle button drawing here... */
-		grid_row_.update_trigger_button_colours(sequencer_.current_step());
+		grid_row_kick_.update_trigger_button_colours(sequencer_.current_step());
 		grid_row_snare_.update_trigger_button_colours(sequencer_.current_step());
 	}
 }

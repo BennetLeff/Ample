@@ -19,6 +19,7 @@ SampleSource::SampleSource()
 
 SampleSource::~SampleSource() 
 {
+	releaseResources();
 	current_buffer_ = nullptr;
 	stopThread(500);
 }

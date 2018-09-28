@@ -61,6 +61,11 @@ public:
 		}
 	}
 
+	bool is_step_on(uint16_t step)
+	{
+		return sample_assigners_.at(step)->is_on_;
+	}
+
 	void update_trigger_button_colours(uint16_t step_to_update)
 	{
 		if (step_to_update != 0)
@@ -124,7 +129,7 @@ private:
 	Sequencer sequencer_;
 
 	std::array<std::unique_ptr<SequencerButton>, NUM_SEQUENCER_STEPS> sample_assigners_;
-	SequencerGridRow grid_row_{};
+	SequencerGridRow grid_row_kick_{};
 	SequencerGridRow grid_row_snare_{};
 
 

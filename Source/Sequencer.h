@@ -41,7 +41,6 @@ public:
 	void update_tempo(double new_tempo);
 	uint16_t current_step() { return step_index_; }
 
-	bool play_at_current_trigger_ = false;
 private:
 	void step();
 	void play();
