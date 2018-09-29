@@ -42,7 +42,7 @@ void SampleSource::getNextAudioBlock(const AudioSourceChannelInfo& buffer_to_fil
 	}
 
 	auto cur_audio_sampler_buffer = retained_current_buffer->get_audio_sample_buffer();
-	int32_t position = retained_current_buffer->position_;
+	uint32_t position = retained_current_buffer->position_;
 
 	int num_in_channels = cur_audio_sampler_buffer->getNumChannels();
 	int num_out_channels = buffer_to_fill.buffer->getNumChannels();
@@ -177,7 +177,7 @@ void SampleSource::set_size(int num_channels, int num_samples)
 	}
 }
 
-void SampleSource::set_position(double pos)
+void SampleSource::set_position(uint32_t pos)
 {
 	position_ = pos;
 }

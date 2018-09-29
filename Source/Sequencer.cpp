@@ -62,7 +62,7 @@ void Sequencer::run()
 	while (!threadShouldExit())
 	{
 		play();
-		sleep(sleep_amount_ * 1000);
+		sleep(static_cast<int>(sleep_amount_ * 1000));
 	}
 }
 

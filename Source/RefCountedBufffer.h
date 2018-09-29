@@ -28,7 +28,7 @@ class RefCountedBuffer : public ReferenceCountedObject {
     return buffer_;
   }
 
-  double position_ = 0;
+  uint32_t position_ = 0;
 
  private:
   String name_;

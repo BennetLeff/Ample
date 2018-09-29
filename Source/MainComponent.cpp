@@ -6,7 +6,7 @@
 
 MainComponent::MainComponent()
 	: state_(PlayState::Stopped),
-	sequencer_(8, 120.0)
+	sequencer_(8, 140.0)
 {
     // specify the number of input and output channels that we want to open
     setAudioChannels (0, 2);
@@ -39,6 +39,9 @@ MainComponent::MainComponent()
 	stop_button_.onClick = [this] { stop_button_clicked(); };
 	stop_button_.setColour(TextButton::buttonColourId, Colours::red);
 	stop_button_.setEnabled(false);
+
+	// setup_text_button(play_button_, [this] { play_button_clicked(); }, "Play", Colours::green, false);
+	// setup_text_button(stop_button_, [this] { stop_button_clicked(); }, "Stop", Colours::red, false);
 	
 	sampler_source_kick_.addChangeListener(this);
 	sampler_source_snare_.addChangeListener(this);
@@ -107,15 +110,7 @@ void MainComponent::resized()
 
 void MainComponent::changeListenerCallback(ChangeBroadcaster * source)
 {
-	if (source == &sampler_source_kick_)
-	{
-		if (sampler_source_kick_.is_playing())
-			change_state(PlayState::Playing);
-		else
-			change_state(PlayState::Stopped);
-	}
-
-	else if (source == &sequencer_)
+	if (source == &sequencer_)
 	{
 		uint16_t cur_step = sequencer_.current_step();
 		if (grid_row_kick_.is_step_on(cur_step))
@@ -125,11 +120,6 @@ void MainComponent::changeListenerCallback(ChangeBroadcaster * source)
 		if (grid_row_snare_.is_step_on(cur_step))
 		{
 			sampler_source_snare_.start();
-		}
-		else
-		{
-			sampler_source_kick_.stop();
-			sampler_source_snare_.stop();
 		}
 
 		/* Handle button drawing here... */
@@ -148,8 +138,8 @@ void MainComponent::change_state(PlayState new_state)
 		case PlayState::Stopped:                          
 			stop_button_.setEnabled(false);
 			play_button_.setEnabled(true);
-			sampler_source_kick_.set_position(0.0);
-			sampler_source_kick_.set_playing(false);
+			//sampler_source_kick_.set_position(0.0);
+			// sampler_source_kick_.set_playing(false);
 			break;
 		case PlayState::Starting:                          
 			play_button_.setEnabled(false);
@@ -160,7 +150,7 @@ void MainComponent::change_state(PlayState new_state)
 			break;
 		case PlayState::Stopping:                          
 			play_button_.setEnabled(true);
-			sampler_source_kick_.stop();
+			// sampler_source_kick_.stop();
 			break;
 		}
 	}
@@ -169,7 +159,7 @@ void MainComponent::change_state(PlayState new_state)
 void MainComponent::open_button_kick_clicked()
 {
 	FileChooser chooser("Select a WAV file to play... ",
-		File::nonexistent,
+		File(),
 		"*.wav");
 
 	if (chooser.browseForFileToOpen())
@@ -188,7 +178,7 @@ void MainComponent::open_button_kick_clicked()
 void MainComponent::open_button_snare_clicked()
 {
 	FileChooser chooser("Select a WAV file to play... ",
-		File::nonexistent,
+		File(),
 		"*.wav");
 
 	if (chooser.browseForFileToOpen())
@@ -207,6 +197,15 @@ void MainComponent::open_button_snare_clicked()
 void MainComponent::play_button_clicked()
 {
 	change_state(PlayState::Starting);
+}
+
+void MainComponent::setup_text_button(TextButton& button, std::function<void()> on_click, const String& text, const Colour& colour, const bool on_or_off)
+{
+	addAndMakeVisible(button);
+	button.onClick = on_click;
+	button.setButtonText(text);
+	button.setColour(TextButton::buttonColourId, colour);
+	button.setEnabled(on_or_off);
 }
 
 void MainComponent::stop_button_clicked()

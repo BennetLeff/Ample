@@ -31,7 +31,7 @@ public:
 
 	void set_file_path(String path_to_swap) { chosen_path_.swapWith(path_to_swap); }
 	void set_size(int num_channels, int num_samples);
-	void set_position(double pos);
+	void set_position(uint32_t pos);
 	void set_playing(bool playing) { is_playing_ = playing;  }
 	bool is_playing() { return is_playing_;  }
 	bool is_empty();
@@ -47,7 +47,7 @@ private:
 	String chosen_path_;
 
 	bool is_playing_ = false;
-	double position_ = 0.0;
+	int position_ = 0;
 
 	AudioFormatManager format_manager_;
 };

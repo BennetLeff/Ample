@@ -45,7 +45,6 @@ private:
 	SampleSource sampler_source_snare_;
 	Sequencer sequencer_;
 
-	std::array<std::unique_ptr<SequencerButton>, NUM_SEQUENCER_STEPS> sample_assigners_;
 	SequencerTrack grid_row_kick_{};
 	SequencerTrack grid_row_snare_{};
 
@@ -54,9 +53,8 @@ private:
 	void open_button_kick_clicked(); 
 	void open_button_snare_clicked();
 	void play_button_clicked();
-	// void initialize_trigger_buttons_array(std::array<std::unique_ptr<SequencerButton>, NUM_SEQUENCER_STEPS>& button_array);
+	void setup_text_button(TextButton& button, std::function<void()> on_click, const String& text, const Colour& colour, const bool on_or_off);
 	void stop_button_clicked();
-	// void trigger_button_color(uint16_t step_number);
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };
