@@ -28,20 +28,8 @@ MainComponent::MainComponent()
 	for (auto& button : grid_row_snare_.sample_assigners_)
 		addAndMakeVisible(button.get());
 
-	addAndMakeVisible(&play_button_);
-	play_button_.setButtonText("Play");
-	play_button_.onClick = [this] { play_button_clicked(); };
-	play_button_.setColour(TextButton::buttonColourId, Colours::green);
-	play_button_.setEnabled(false);
-
-	addAndMakeVisible(&stop_button_);
-	stop_button_.setButtonText("Stop");
-	stop_button_.onClick = [this] { stop_button_clicked(); };
-	stop_button_.setColour(TextButton::buttonColourId, Colours::red);
-	stop_button_.setEnabled(false);
-
-	// setup_text_button(play_button_, [this] { play_button_clicked(); }, "Play", Colours::green, false);
-	// setup_text_button(stop_button_, [this] { stop_button_clicked(); }, "Stop", Colours::red, false);
+	setup_text_button(play_button_, [this] { play_button_clicked(); }, "Play", Colours::green, false);
+	setup_text_button(stop_button_, [this] { stop_button_clicked(); }, "Stop", Colours::red, false);
 	
 	sampler_source_kick_.addChangeListener(this);
 	sampler_source_snare_.addChangeListener(this);
@@ -138,8 +126,6 @@ void MainComponent::change_state(PlayState new_state)
 		case PlayState::Stopped:                          
 			stop_button_.setEnabled(false);
 			play_button_.setEnabled(true);
-			//sampler_source_kick_.set_position(0.0);
-			// sampler_source_kick_.set_playing(false);
 			break;
 		case PlayState::Starting:                          
 			play_button_.setEnabled(false);
@@ -150,7 +136,6 @@ void MainComponent::change_state(PlayState new_state)
 			break;
 		case PlayState::Stopping:                          
 			play_button_.setEnabled(true);
-			// sampler_source_kick_.stop();
 			break;
 		}
 	}

@@ -21,10 +21,10 @@ class RefCountedBuffer : public ReferenceCountedObject {
   RefCountedBuffer(const String& name_to_use, int num_channels, int num_samples)
       : name_(name_to_use)
   {
-    buffer_ = std::make_shared<AudioSampleBuffer>(num_channels, num_samples);
+	  buffer_ = AudioSampleBuffer(num_channels, num_samples);
   }
 
-  const std::shared_ptr<AudioSampleBuffer>& get_audio_sample_buffer() {
+  AudioSampleBuffer& get_audio_sample_buffer() {
     return buffer_;
   }
 
@@ -32,6 +32,6 @@ class RefCountedBuffer : public ReferenceCountedObject {
 
  private:
   String name_;
-  std::shared_ptr<AudioSampleBuffer> buffer_;
+  AudioSampleBuffer buffer_;
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(RefCountedBuffer)
 };

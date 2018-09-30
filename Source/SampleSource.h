@@ -41,7 +41,7 @@ private:
 	void free_stale_buffers();
 	void check_for_path_to_open();
 
-	std::optional<std::shared_ptr<AudioSampleBuffer>> get_buffer();
+	std::optional<AudioSampleBuffer> get_buffer();
 	ReferenceCountedArray<RefCountedBuffer> buffers_;
 	RefCountedBuffer::Ptr current_buffer_;
 	String chosen_path_;
