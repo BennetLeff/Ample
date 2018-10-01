@@ -47,12 +47,9 @@ MainComponent::~MainComponent()
 
 void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRate)
 {
-	sampler_source_kick_.prepareToPlay(samplesPerBlockExpected, sampleRate);
-	sampler_source_snare_.prepareToPlay(samplesPerBlockExpected, sampleRate);
-	mixer_source_.prepareToPlay(samplesPerBlockExpected, sampleRate);
-
 	mixer_source_.addInputSource(&sampler_source_kick_, false);
 	mixer_source_.addInputSource(&sampler_source_snare_, false);
+	mixer_source_.prepareToPlay(samplesPerBlockExpected, sampleRate);
 }
 
 void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill)

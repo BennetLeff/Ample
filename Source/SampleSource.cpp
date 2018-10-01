@@ -37,21 +37,20 @@ void SampleSource::getNextAudioBlock(const AudioSourceChannelInfo& buffer_to_fil
 		return;
 	}
 
+	int32_t position = current_buffer_.position_;
 
-	uint32_t position = current_buffer_.position_;
+	int32_t num_in_channels = current_buffer_.buffer_->getNumChannels();
+	int32_t num_out_channels = buffer_to_fill.buffer->getNumChannels();
 
-	uint32_t num_in_channels = current_buffer_.buffer_->getNumChannels();
-	uint32_t num_out_channels = buffer_to_fill.buffer->getNumChannels();
-
-	int out_samples_remaining = buffer_to_fill.numSamples;
-	int out_samples_offset = 0;
+	int32_t out_samples_remaining = buffer_to_fill.numSamples;
+	int32_t out_samples_offset = 0;
 
 	while (out_samples_remaining > 0)
 	{
-		int buffer_samples_remaining = current_buffer_.buffer_->getNumSamples() - position_;
-		int samples_this_iter = jmin(out_samples_remaining, buffer_samples_remaining);
+		int32_t buffer_samples_remaining = current_buffer_.buffer_->getNumSamples() - position_;
+		int32_t samples_this_iter = jmin(out_samples_remaining, buffer_samples_remaining);
 
-		for (int channel = 0; channel < num_out_channels; ++channel)
+		for (int32_t channel = 0; channel < num_out_channels; ++channel)
 		{
 			buffer_to_fill.buffer->copyFrom(channel,
 				buffer_to_fill.startSample + out_samples_offset,
@@ -65,10 +64,12 @@ void SampleSource::getNextAudioBlock(const AudioSourceChannelInfo& buffer_to_fil
 		out_samples_offset += samples_this_iter;
 		set_position(position_ + samples_this_iter); 
 
+		/*
+		 * If we get to the end of the sample buffer, we can stop playing.
+		 */
 		if (position_ == current_buffer_.buffer_->getNumSamples())
 		{
-			set_position(0);
-			is_playing_ = false;
+			stop();
 			buffer_to_fill.clearActiveBufferRegion();
 			return;
 		}
