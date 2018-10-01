@@ -7,7 +7,6 @@
 
   ==============================================================================
 */
-
 #include "SampleSource.h"
 
 SampleSource::SampleSource()
@@ -20,7 +19,6 @@ SampleSource::SampleSource()
 SampleSource::~SampleSource() 
 {
 	releaseResources();
-	current_buffer_ = nullptr;
 	stopThread(500);
 }
 
@@ -33,33 +31,31 @@ void SampleSource::getNextAudioBlock(const AudioSourceChannelInfo& buffer_to_fil
 	}
 
 	// Once we know we're actually playing audio we can proceed with loading and playing data.
-	RefCountedBuffer::Ptr retained_current_buffer(current_buffer_);
-
-	if (retained_current_buffer == nullptr)
+	if (current_buffer_.buffer_ == nullptr)
 	{
 		buffer_to_fill.clearActiveBufferRegion();
 		return;
 	}
 
-	auto cur_audio_sampler_buffer = retained_current_buffer->get_audio_sample_buffer();
-	uint32_t position = retained_current_buffer->position_;
 
-	int num_in_channels = cur_audio_sampler_buffer.getNumChannels();
-	int num_out_channels = buffer_to_fill.buffer->getNumChannels();
+	uint32_t position = current_buffer_.position_;
+
+	uint32_t num_in_channels = current_buffer_.buffer_->getNumChannels();
+	uint32_t num_out_channels = buffer_to_fill.buffer->getNumChannels();
 
 	int out_samples_remaining = buffer_to_fill.numSamples;
 	int out_samples_offset = 0;
 
 	while (out_samples_remaining > 0)
 	{
-		int buffer_samples_remaining = cur_audio_sampler_buffer.getNumSamples() - position_;
+		int buffer_samples_remaining = current_buffer_.buffer_->getNumSamples() - position_;
 		int samples_this_iter = jmin(out_samples_remaining, buffer_samples_remaining);
 
 		for (int channel = 0; channel < num_out_channels; ++channel)
 		{
 			buffer_to_fill.buffer->copyFrom(channel,
 				buffer_to_fill.startSample + out_samples_offset,
-				(cur_audio_sampler_buffer),
+				*(current_buffer_.buffer_.get()),
 				channel % num_in_channels,
 				position_,
 				samples_this_iter);
@@ -69,7 +65,7 @@ void SampleSource::getNextAudioBlock(const AudioSourceChannelInfo& buffer_to_fil
 		out_samples_offset += samples_this_iter;
 		set_position(position_ + samples_this_iter); 
 
-		if (position_ == cur_audio_sampler_buffer.getNumSamples())
+		if (position_ == current_buffer_.buffer_->getNumSamples())
 		{
 			set_position(0);
 			is_playing_ = false;
@@ -78,7 +74,7 @@ void SampleSource::getNextAudioBlock(const AudioSourceChannelInfo& buffer_to_fil
 		}
 	}
 
-	retained_current_buffer->position_ = position;
+	current_buffer_.position_ = position;
 }
 
 void SampleSource::run()
@@ -86,7 +82,6 @@ void SampleSource::run()
 	while (!threadShouldExit())
 	{
 		check_for_path_to_open();
-		free_stale_buffers();
 		wait(500);
 	}
 }
@@ -115,16 +110,6 @@ void SampleSource::stop()
 	}
 }
 
-void SampleSource::free_stale_buffers()
-{
-	for (auto i = buffers_.size(); --i >= 0;)                           // [1]
-	{
-		RefCountedBuffer::Ptr buffer(buffers_.getUnchecked(i));			// [2]
-		if (buffer->getReferenceCount() == 2)							// [3]
-			buffers_.remove(i);
-	}
-}
-
 void SampleSource::check_for_path_to_open()
 {
 	String path_to_open;
@@ -138,10 +123,10 @@ void SampleSource::check_for_path_to_open()
 			auto duration = reader->lengthInSamples / reader->sampleRate;
 			if (duration < 2)
 			{
-				RefCountedBuffer::Ptr new_buffer = new RefCountedBuffer(file.getFileName(), reader->numChannels, (int)reader->lengthInSamples);
-				reader->read(&new_buffer->get_audio_sample_buffer(), 0, (int)reader->lengthInSamples, 0, true, true);
-				current_buffer_ = new_buffer;
-				buffers_.add(new_buffer);
+				auto temp_buffer = std::make_unique<AudioSampleBuffer>(reader->numChannels, reader->lengthInSamples);
+				reader->read(temp_buffer.get(), 0, reader->lengthInSamples, 0, true, true);
+				current_buffer_.buffer_ = std::move(temp_buffer);
+				current_buffer_.position_ = 0;
 			}
 			else
 			{
@@ -151,30 +136,19 @@ void SampleSource::check_for_path_to_open()
 	}
 }
 
-std::optional<AudioSampleBuffer> SampleSource::get_buffer()
-{
-	if (current_buffer_)
-		return std::make_optional<AudioSampleBuffer>(current_buffer_->get_audio_sample_buffer());
-	else
-		return std::nullopt;
-}
 
 bool SampleSource::is_empty()
 {
-	auto buffer = get_buffer();
-	if (!buffer.has_value())
+	if (current_buffer_.buffer_ == nullptr)
 		return true;
-
-	return ((*get_buffer()).getNumChannels() == 0) && ((*get_buffer()).getNumSamples() == 0);
+	else
+		return (current_buffer_.buffer_->getNumChannels() == 0) && (current_buffer_.buffer_->getNumSamples() == 0);
 }
 
 void SampleSource::set_size(int num_channels, int num_samples)
 {
-	auto buffer = get_buffer();
-	if (buffer.has_value())
-	{
-		(*buffer).setSize(num_channels, num_samples);
-	}
+	if (current_buffer_.buffer_ != nullptr)
+		current_buffer_.buffer_->setSize(num_channels, num_samples);
 }
 
 void SampleSource::set_position(uint32_t pos)

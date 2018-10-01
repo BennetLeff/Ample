@@ -9,10 +9,6 @@
             file="Source/SequencerTrack.h"/>
       <FILE id="LrbDAp" name="Sequencer.cpp" compile="1" resource="0" file="Source/Sequencer.cpp"/>
       <FILE id="qNaAFS" name="Sequencer.h" compile="0" resource="0" file="Source/Sequencer.h"/>
-      <FILE id="sMRnjq" name="RefCountedBufffer.cpp" compile="1" resource="0"
-            file="Source/RefCountedBufffer.cpp"/>
-      <FILE id="Hui67r" name="RefCountedBufffer.h" compile="0" resource="0"
-            file="Source/RefCountedBufffer.h"/>
       <FILE id="S88uOR" name="SampleSource.cpp" compile="1" resource="0"
             file="Source/SampleSource.cpp"/>
       <FILE id="lunVKF" name="SampleSource.h" compile="0" resource="0" file="Source/SampleSource.h"/>

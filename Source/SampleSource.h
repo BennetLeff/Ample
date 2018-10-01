@@ -11,11 +11,14 @@
 #pragma once
 
 #include <memory>
-#include <optional>
 
 #include "JuceHeader.h"
 
-#include "RefCountedBufffer.h"
+struct SampleBuffer
+{
+	std::unique_ptr<AudioSampleBuffer> buffer_;
+	uint32_t position_ = 0;
+};
 
 class SampleSource : public AudioTransportSource, public Thread 
 {
@@ -38,12 +41,9 @@ public:
 		
 private:
 	void run() override;
-	void free_stale_buffers();
 	void check_for_path_to_open();
 
-	std::optional<AudioSampleBuffer> get_buffer();
-	ReferenceCountedArray<RefCountedBuffer> buffers_;
-	RefCountedBuffer::Ptr current_buffer_;
+	SampleBuffer current_buffer_;
 	String chosen_path_;
 
 	bool is_playing_ = false;

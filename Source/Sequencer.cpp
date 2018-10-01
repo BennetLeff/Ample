@@ -12,16 +12,17 @@
 #include <thread>
 
 #include "JuceHeader.h"
-
 #include "Sequencer.h"
 
 Sequencer::Sequencer(const size_t number_of_steps, const double tempo)
 	: tempo_(tempo), step_index_(0),
+	sleep_amount_(tempo_ > 0 ? 60.0 / tempo_ : 0),
 	Thread("Sequencer Thread")
 {
 	steps_.resize(number_of_steps);
 	for (int i = 0; i < number_of_steps; i++)
 		clear_trigger(i);
+
 	startThread();
 }
 
@@ -29,7 +30,6 @@ Sequencer::~Sequencer()
 {
 	stopThread(500);
 }
-
 
 void Sequencer::update_tempo(double new_tempo)
 {

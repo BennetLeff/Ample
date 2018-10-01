@@ -10,20 +10,20 @@
 
 #pragma once
 
-#include <functional>
+// #include <functional>
 #include <vector>
 
-class Event
-{
-public:
-	Event() :
-		callback_([]() {}) { } 
-	Event(std::function<void()> callback) : callback_(callback) { }
-
-	void execute() { std::invoke(callback_); }
-private:
-	std::function<void()> callback_;
-};
+//class Event
+//{
+//public:
+//	Event() :
+//		callback_([]() {}) { } 
+//	Event(std::function<void()> callback) : callback_(callback) { }
+//
+//	void execute() { std::invoke(callback_); }
+//private:
+//	std::function<void()> callback_;
+//};
 
 class Sequencer : public ChangeBroadcaster, public Thread
 {
@@ -47,6 +47,6 @@ private:
 
 	std::vector<bool> steps_{ false };
 	double tempo_; // aka BPM
-	double sleep_amount_ = tempo_ > 0 ? 60.0 / tempo_ : 0;
+	double sleep_amount_;
 	uint16_t step_index_; // Which step are we on in the sequencer.
 };
