@@ -22,6 +22,17 @@ SampleSource::~SampleSource()
 	stopThread(500);
 }
 
+void SampleSource::changeListenerCallback(ChangeBroadcaster* source)
+{
+	/*
+	 * If ChangeBroadcaster is any source we should assume it's a Sequencer Event,
+	 * but there should be some checks to assure this. The logic inside here should
+	 * be more complex. 
+	 */
+	
+	is_playing_ = true;
+}
+
 void SampleSource::getNextAudioBlock(const AudioSourceChannelInfo& buffer_to_fill)
 {
 	if (!is_playing())
@@ -36,6 +47,7 @@ void SampleSource::getNextAudioBlock(const AudioSourceChannelInfo& buffer_to_fil
 		buffer_to_fill.clearActiveBufferRegion();
 		return;
 	}
+
 
 	int32_t position = current_buffer_.position_;
 
@@ -60,6 +72,13 @@ void SampleSource::getNextAudioBlock(const AudioSourceChannelInfo& buffer_to_fil
 				samples_this_iter);
 		}
 	
+		/*
+		 *	These operations are a bit like moving an audio "scrubber". 
+		 *  Each step we move our needle, the position, along a bit further.
+		 *  This lets us keep track of where we are in the audio so that JUCE 
+		 *  can call getNextAudioBlock over and over while processing audio, and 
+		 *  "scrubbing" along.
+		 */
 		out_samples_remaining -= samples_this_iter;
 		out_samples_offset += samples_this_iter;
 		set_position(position_ + samples_this_iter); 
@@ -136,7 +155,6 @@ void SampleSource::check_for_path_to_open()
 		}
 	}
 }
-
 
 bool SampleSource::is_empty()
 {

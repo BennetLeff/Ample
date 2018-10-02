@@ -14,13 +14,15 @@
 
 #include "JuceHeader.h"
 
+#include "Sequencer.h"
+
 struct SampleBuffer
 {
 	std::unique_ptr<AudioSampleBuffer> buffer_;
 	uint32_t position_ = 0;
 };
 
-class SampleSource : public AudioTransportSource, public Thread 
+class SampleSource : public AudioTransportSource, public ChangeListener, public Thread 
 {
 public:
 	SampleSource();
@@ -28,6 +30,8 @@ public:
 	void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override;
 	void getNextAudioBlock(const AudioSourceChannelInfo& bufferToFill) override;
 	void releaseResources() override;
+
+	void changeListenerCallback(ChangeBroadcaster* source) override;
 
 	void start();
 	void stop();

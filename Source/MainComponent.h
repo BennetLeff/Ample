@@ -43,11 +43,11 @@ private:
 	MixerAudioSource mixer_source_;
 	SampleSource sampler_source_kick_;
 	SampleSource sampler_source_snare_;
-	Sequencer sequencer_;
+	// Sequencer sequencer_;
+	std::shared_ptr<Sequencer> sequencer_;
 
-	SequencerTrack grid_row_kick_{};
-	SequencerTrack grid_row_snare_{};
-
+	std::unique_ptr<SequencerTrack> grid_row_kick_;
+	std::unique_ptr<SequencerTrack> grid_row_snare_;
 
 	void change_state(PlayState new_state);
 	void open_button_kick_clicked(); 

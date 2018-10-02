@@ -13,17 +13,28 @@
 // #include <functional>
 #include <vector>
 
-//class Event
-//{
-//public:
-//	Event() :
-//		callback_([]() {}) { } 
-//	Event(std::function<void()> callback) : callback_(callback) { }
-//
-//	void execute() { std::invoke(callback_); }
-//private:
-//	std::function<void()> callback_;
-//};
+#include "SequencerTrack.h"
+
+class SequencerButton;
+
+/*
+ * It may at first seem counterintuitive for an object to be a 
+ * broadcaster and a listener. However, this is necessary as each
+ * Event must be updated when the corresponding SequencerButton is
+ * toggled on or off, and they must Broadcast to some number of 
+ * behaviours. A typical example is Broadcasting to a SampleSource
+ * to play or stop.
+ */
+class Event : public ChangeBroadcaster, public ChangeListener
+{
+public:
+	Event() : on_(false) { }
+	Event(const Event& ev) : on_(ev.on_) { }
+
+	void changeListenerCallback(ChangeBroadcaster* source) override;
+
+	bool on_ = false;
+};
 
 class Sequencer : public ChangeBroadcaster, public Thread
 {
@@ -34,18 +45,19 @@ public:
 	*/
 	Sequencer(const size_t number_of_steps, const double tempo);
 	~Sequencer();
-	void run() override;
-	void stop();
-	void update_trigger(bool event, int step_number);
 	void clear_trigger(int step_number);
 	void update_tempo(double new_tempo);
+	void update_trigger(bool on_or_off, int step_number);
+	void run() override;
+	void stop();
+	
 	uint16_t current_step() { return step_index_; }
 
+	std::vector<Event> steps_;
 private:
 	void step();
 	void play();
 
-	std::vector<bool> steps_{ false };
 	double tempo_; // aka BPM
 	double sleep_amount_;
 	uint16_t step_index_; // Which step are we on in the sequencer.

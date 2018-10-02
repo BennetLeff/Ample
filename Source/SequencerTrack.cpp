@@ -10,7 +10,8 @@
 
 #include "SequencerTrack.h"
 
-SequencerTrack::SequencerTrack()
+SequencerTrack::SequencerTrack(const std::shared_ptr<Sequencer>& main_sequencer)
+	: sequencer_(main_sequencer)
 {
 	for (auto& button : sample_assigners_)
 	{
@@ -23,8 +24,27 @@ SequencerTrack::SequencerTrack()
 		 */
 		button->onClick = [&button] {
 			button->is_on_ = !button->is_on_;
-			button->toggle_on_off_colour();
+			button->toggle();
 		};
+	}
+}
+
+void SequencerTrack::changeListenerCallback(ChangeBroadcaster* source)
+{
+	/*
+	 * There needs to be a way to ensure the only broadcaster source
+	 * is a sequencer. However, until that is written, we'll assume
+	 * the source is the global sequencer.
+	 * For reasons, the raw pointer within a weak_ptr can only be 
+	 * referenced if a shared_ptr is constructed by a weak_ptr... 
+	 * So for now, we lock and get the address to see if the 
+	 * sequencer is the source.
+	 */
+	if (source == sequencer_.lock().get())
+	{
+		auto sequencer_source = static_cast<Sequencer*>(source);
+
+		update_trigger_button_colours(sequencer_source->current_step());
 	}
 }
 
@@ -46,9 +66,9 @@ void SequencerTrack::position_triggers(uint16_t y_offset)
 void SequencerTrack::update_trigger_button_colours(uint16_t step_to_update)
 {
 	if (step_to_update != 0)
-		sample_assigners_.at(step_to_update - 1)->toggle_on_off_colour();
+		sample_assigners_.at(step_to_update - 1)->toggle();
 	else
-		sample_assigners_.at(sample_assigners_.size() - 1)->toggle_on_off_colour();
+		sample_assigners_.at(sample_assigners_.size() - 1)->toggle();
 
 	sample_assigners_.at(step_to_update)->trigger_sequencer_colour();
 }

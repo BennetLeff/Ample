@@ -5,27 +5,54 @@
 #include <algorithm>
 
 MainComponent::MainComponent()
-	: state_(PlayState::Stopped),
-	sequencer_(8, 140.0)
+	: state_(PlayState::Stopped)
 {
     // specify the number of input and output channels that we want to open
     setAudioChannels (0, 2);
 
+	/*
+	 * Initialize Sequencer and follow by initializing all SequencerTrack objects
+	 * with the sequencer_. 
+	 * Internally this creates a std::weak_ptr inside the SequencerTracks.
+	 * The sequencer_ starts stepping automatically as its insantiation 
+	 * starts a new thread.
+	 */
+	sequencer_ = std::make_shared<Sequencer>(NUM_SEQUENCER_STEPS, 140.0);
+
+	grid_row_kick_ = std::make_unique<SequencerTrack>(sequencer_);
+	grid_row_snare_ = std::make_unique<SequencerTrack>(sequencer_);
+
+	sequencer_->addChangeListener(grid_row_kick_.get());
+	sequencer_->addChangeListener(grid_row_snare_.get());
+
+
+	/*
+	 * Start adding in GUI components - this should become more programmatic.
+	 */
 	addAndMakeVisible(&open_button_kick_);
 	open_button_kick_.setButtonText("Open Kick...");
-	// this data should be passed to the sampler_source but HOW!?
 	open_button_kick_.onClick = [this] { open_button_kick_clicked(); };
 	
 	addAndMakeVisible(&open_button_snare_);
 	open_button_snare_.setButtonText("Open Snare...");
-	// this data should be passed to the sampler_source but HOW!?
 	open_button_snare_.onClick = [this] { open_button_snare_clicked(); };
 	
+	for (auto& seq_step_as_event : sequencer_->steps_)
+	{
+		/*
+		 * Add each SampleSource as a listener to the sequencer steps.
+		 * Now when each step is arrived at, if it's on, it will trigger the SampleSource
+		 * to play.
+		 */
+		seq_step_as_event.addChangeListener(&sampler_source_kick_);
+		seq_step_as_event.addChangeListener(&sampler_source_snare_);
+	}
+	
 	/* Define sample assignment buttons. */
-	for (auto& button : grid_row_kick_.sample_assigners_)
+	for (auto& button : grid_row_kick_->sample_assigners_)
 		addAndMakeVisible(button.get());
 	
-	for (auto& button : grid_row_snare_.sample_assigners_)
+	for (auto& button : grid_row_snare_->sample_assigners_)
 		addAndMakeVisible(button.get());
 
 	setup_text_button(play_button_, [this] { play_button_clicked(); }, "Play", Colours::green, false);
@@ -33,7 +60,7 @@ MainComponent::MainComponent()
 	
 	sampler_source_kick_.addChangeListener(this);
 	sampler_source_snare_.addChangeListener(this);
-	sequencer_.addChangeListener(this);
+	sequencer_->addChangeListener(this);
 
 	// Make sure you set the size of the component after
 	// you add any child components.
@@ -89,28 +116,13 @@ void MainComponent::resized()
 	play_button_.setBounds(10, 70, getWidth() - 20, 20);
 	stop_button_.setBounds(10, 100, getWidth() - 20, 20);
 
-	grid_row_kick_.position_triggers();
-	grid_row_snare_.position_triggers(60);
+	grid_row_kick_->position_triggers();
+	grid_row_snare_->position_triggers(60);
 }
 
 void MainComponent::changeListenerCallback(ChangeBroadcaster * source)
 {
-	if (source == &sequencer_)
-	{
-		uint16_t cur_step = sequencer_.current_step();
-		if (grid_row_kick_.is_step_on(cur_step))
-		{
-			sampler_source_kick_.start();
-		}
-		if (grid_row_snare_.is_step_on(cur_step))
-		{
-			sampler_source_snare_.start();
-		}
 
-		/* Handle button drawing here... */
-		grid_row_kick_.update_trigger_button_colours(sequencer_.current_step());
-		grid_row_snare_.update_trigger_button_colours(sequencer_.current_step());
-	}
 }
 
 void MainComponent::change_state(PlayState new_state)
