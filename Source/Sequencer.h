@@ -25,16 +25,16 @@ class SequencerButton;
  * behaviours. A typical example is Broadcasting to a SampleSource
  * to play or stop.
  */
-class Event : public ChangeBroadcaster, public ChangeListener
-{
-public:
-	Event() : on_(false) { }
-	Event(const Event& ev) : on_(ev.on_) { }
-
-	void changeListenerCallback(ChangeBroadcaster* source) override;
-
-	bool on_ = false;
-};
+//class Event : public ChangeBroadcaster, public ChangeListener
+//{
+//public:
+//	Event() : on_(false) { }
+//	Event(const Event& ev) : on_(ev.on_) { }
+//
+//	void changeListenerCallback(ChangeBroadcaster* source) override;
+//
+//	bool on_ = false;
+//};
 
 class Sequencer : public ChangeBroadcaster, public Thread
 {
@@ -53,7 +53,7 @@ public:
 	
 	uint16_t current_step() { return step_index_; }
 
-	std::vector<Event> steps_;
+	std::vector<bool> steps_{ false };
 private:
 	void step();
 	void play();

@@ -37,23 +37,21 @@ MainComponent::MainComponent()
 	open_button_snare_.setButtonText("Open Snare...");
 	open_button_snare_.onClick = [this] { open_button_snare_clicked(); };
 	
-	for (auto& seq_step_as_event : sequencer_->steps_)
+	/*
+	 * Define sample assignment buttons.
+	 * We also need to make sure each button is hooked up to an event
+	 */
+	for (auto& button : grid_row_kick_->sample_assigners_)
 	{
-		/*
-		 * Add each SampleSource as a listener to the sequencer steps.
-		 * Now when each step is arrived at, if it's on, it will trigger the SampleSource
-		 * to play.
-		 */
-		seq_step_as_event.addChangeListener(&sampler_source_kick_);
-		seq_step_as_event.addChangeListener(&sampler_source_snare_);
+		addAndMakeVisible(button.get());
+		button->addChangeListener(&sampler_source_kick_);
 	}
 	
-	/* Define sample assignment buttons. */
-	for (auto& button : grid_row_kick_->sample_assigners_)
-		addAndMakeVisible(button.get());
-	
 	for (auto& button : grid_row_snare_->sample_assigners_)
+	{
 		addAndMakeVisible(button.get());
+		button->addChangeListener(&sampler_source_snare_);
+	}
 
 	setup_text_button(play_button_, [this] { play_button_clicked(); }, "Play", Colours::green, false);
 	setup_text_button(stop_button_, [this] { stop_button_clicked(); }, "Stop", Colours::red, false);

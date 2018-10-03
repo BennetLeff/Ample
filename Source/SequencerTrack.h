@@ -40,12 +40,15 @@ public:
 	void toggle()
 	{
 		if (is_on_)
+		{
 			setColour(TextButton::buttonColourId, on_colour_);
+			sendChangeMessage();
+		}
 		else
 			setColour(TextButton::buttonColourId, off_colour_);
 
 		/* No matter what updates, we should tell the Event associated with this button to update. */
-		sendChangeMessage();
+		// sendChangeMessage();
 	}
 
 	void trigger_sequencer_colour()
@@ -80,9 +83,13 @@ public:
 	void changeListenerCallback(ChangeBroadcaster* source) override;
 
 	bool is_step_on(uint16_t step);
+
+	void broadcast_from_sequencer_button();
 	void position_triggers(uint16_t y_offset = 0);
 	void update_trigger_button_colours(uint16_t step_to_update);
 
 	std::array<std::unique_ptr<SequencerButton>, NUM_SEQUENCER_STEPS> sample_assigners_;
+
+private:
 	std::weak_ptr<Sequencer> sequencer_;
 };
