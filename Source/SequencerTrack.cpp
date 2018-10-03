@@ -40,30 +40,19 @@ void SequencerTrack::changeListenerCallback(ChangeBroadcaster* source)
 	 * So for now, we lock and get the address to see if the 
 	 * sequencer is the source.
 	 */
-	if (source == sequencer_.lock().get())
-	{
+	//if (source == sequencer_.lock().get())
+	//{
 		auto sequencer_source = static_cast<Sequencer*>(source);
-
-		update_trigger_button_colours(sequencer_source->current_step());
-	}
+		auto cur_step = sequencer_source->current_step();
+		if (is_step_on(cur_step))
+			sample_assigners_.at(cur_step)->sendChangeMessage();
+		update_trigger_button_colours(cur_step);
+	//}
 }
 
 bool SequencerTrack::is_step_on(uint16_t step)
 {
 	return sample_assigners_.at(step)->is_on_;
-}
-
-void SequencerTrack::broadcast_from_sequencer_button()
-{
-	auto seq = sequencer_.lock();
-
-	auto curr_button = seq->steps_.at(seq->current_step());
-	auto curr_step = seq->current_step();
-
-	if (curr_button == true)
-	{
-		sample_assigners_.at(curr_step)->sendChangeMessage();
-	}
 }
 
 void SequencerTrack::position_triggers(uint16_t y_offset)

@@ -42,7 +42,6 @@ public:
 		if (is_on_)
 		{
 			setColour(TextButton::buttonColourId, on_colour_);
-			sendChangeMessage();
 		}
 		else
 			setColour(TextButton::buttonColourId, off_colour_);
@@ -84,7 +83,6 @@ public:
 
 	bool is_step_on(uint16_t step);
 
-	void broadcast_from_sequencer_button();
 	void position_triggers(uint16_t y_offset = 0);
 	void update_trigger_button_colours(uint16_t step_to_update);
 
