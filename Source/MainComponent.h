@@ -46,8 +46,11 @@ private:
 	// Sequencer sequencer_;
 	std::shared_ptr<Sequencer> sequencer_;
 
-	std::unique_ptr<SequencerTrack> grid_row_kick_;
-	std::unique_ptr<SequencerTrack> grid_row_snare_;
+	// std::unique_ptr<SequencerTrack> grid_row_kick_;
+	// std::unique_ptr<SequencerTrack> grid_row_snare_;
+
+	static const uint16_t num_sequencer_tracks_ = 2;
+	std::array<std::unique_ptr<SequencerTrack>, num_sequencer_tracks_> sequencer_tracks_;
 
 	void change_state(PlayState new_state);
 	void open_button_kick_clicked(); 

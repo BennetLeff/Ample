@@ -19,15 +19,26 @@ MainComponent::MainComponent()
 	 */
 	sequencer_ = std::make_shared<Sequencer>(NUM_SEQUENCER_STEPS, 140.0);
 
-	grid_row_kick_ = std::make_unique<SequencerTrack>(sequencer_);
-	grid_row_snare_ = std::make_unique<SequencerTrack>(sequencer_);
-
-	sequencer_->addChangeListener(grid_row_kick_.get());
-	sequencer_->addChangeListener(grid_row_snare_.get());
-
 	/*
 	 * Start adding in GUI components - this should become more programmatic.
 	 */
+	for (auto& seq_track : sequencer_tracks_)
+	{
+		seq_track = std::make_unique<SequencerTrack>(sequencer_);
+		sequencer_->addChangeListener(seq_track.get());
+
+		/*
+		 * Add the MainComponent as a parent to each SequencerTrack.
+		 * Internally this makes each SequencerTrack visible.
+		 * This is an ugly way to do this so I'll be fixing it later.
+		 */
+		seq_track->add_and_make_visible(this);
+		// seq_track->attach_sample()
+	}
+
+	sequencer_tracks_.at(0)->attach_sample(sampler_source_kick_);
+	sequencer_tracks_.at(1)->attach_sample(sampler_source_snare_);
+
 	addAndMakeVisible(&open_button_kick_);
 	open_button_kick_.setButtonText("Open Kick...");
 	open_button_kick_.onClick = [this] { open_button_kick_clicked(); };
@@ -35,16 +46,6 @@ MainComponent::MainComponent()
 	addAndMakeVisible(&open_button_snare_);
 	open_button_snare_.setButtonText("Open Snare...");
 	open_button_snare_.onClick = [this] { open_button_snare_clicked(); };
-	
-	/*
-	 * Define sample assignment buttons.
-	 * We also connect each sampler_source to a row of buttons.
-	 */
-	grid_row_kick_->add_and_make_visible(this);
-	grid_row_kick_->attach_sample(sampler_source_kick_);
-
-	grid_row_snare_->add_and_make_visible(this);
-	grid_row_snare_->attach_sample(sampler_source_snare_);
 
 	setup_text_button(play_button_, [this] { play_button_clicked(); }, "Play", Colours::green, false);
 	setup_text_button(stop_button_, [this] { stop_button_clicked(); }, "Stop", Colours::red, false);
@@ -106,8 +107,8 @@ void MainComponent::resized()
 	play_button_.setBounds(10, 70, getWidth() - 20, 20);
 	stop_button_.setBounds(10, 100, getWidth() - 20, 20);
 
-	grid_row_kick_->position_triggers();
-	grid_row_snare_->position_triggers(60);
+	sequencer_tracks_.at(0)->position_triggers(0);
+	sequencer_tracks_.at(1)->position_triggers(60);
 }
 
 void MainComponent::changeListenerCallback(ChangeBroadcaster * source)
