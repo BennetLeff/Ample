@@ -10,6 +10,25 @@
 
 #include "SequencerTrack.h"
 
+void SequencerButton::attach_sample_source(ChangeListener& sample_source)
+{
+	addChangeListener(&sample_source);
+}
+
+void SequencerButton::toggle()
+{
+	if (is_on_)
+		setColour(TextButton::buttonColourId, on_colour_);
+	else
+		setColour(TextButton::buttonColourId, off_colour_);
+}
+
+void SequencerButton::trigger_sequencer_colour()
+{
+	/* Changes the colour when the sequencer step is on this particular button. */
+	setColour(TextButton::buttonColourId, triggered_colour_);
+}
+
 SequencerTrack::SequencerTrack(const std::shared_ptr<Sequencer>& main_sequencer)
 	: sequencer_(main_sequencer)
 {
@@ -26,7 +45,21 @@ SequencerTrack::SequencerTrack(const std::shared_ptr<Sequencer>& main_sequencer)
 			button->is_on_ = !button->is_on_;
 			button->toggle();
 		};
+
+		addAndMakeVisible(button.get());
 	}
+}
+
+void SequencerTrack::add_and_make_visible(Component* parent)
+{
+	for (auto& button : this->sample_assigners_)
+		parent->addAndMakeVisible(button.get());
+}
+
+void SequencerTrack::attach_sample(ChangeListener& sample_source)
+{
+	for (auto& button : sample_assigners_)
+		button->attach_sample_source(sample_source);
 }
 
 void SequencerTrack::changeListenerCallback(ChangeBroadcaster* source)
@@ -40,14 +73,11 @@ void SequencerTrack::changeListenerCallback(ChangeBroadcaster* source)
 	 * So for now, we lock and get the address to see if the 
 	 * sequencer is the source.
 	 */
-	//if (source == sequencer_.lock().get())
-	//{
-		auto sequencer_source = static_cast<Sequencer*>(source);
-		auto cur_step = sequencer_source->current_step();
-		if (is_step_on(cur_step))
-			sample_assigners_.at(cur_step)->sendChangeMessage();
-		update_trigger_button_colours(cur_step);
-	//}
+	auto sequencer_source = static_cast<Sequencer*>(source);
+	auto cur_step = sequencer_source->current_step();
+	if (is_step_on(cur_step))
+		sample_assigners_.at(cur_step)->sendChangeMessage();
+	update_trigger_button_colours(cur_step);
 }
 
 bool SequencerTrack::is_step_on(uint16_t step)

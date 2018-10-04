@@ -72,7 +72,7 @@ void Sequencer::run()
 void Sequencer::play()
 {	
 	/*
-	 * If the current event is on, send a message that triggers sound, gui, etc.
+	 * If the current step is on, send a message that triggers sound, gui, etc.
 	 *	Currently, this should trigger:
 	 *	  - Any associated SampleSource to play audio.
 	 */

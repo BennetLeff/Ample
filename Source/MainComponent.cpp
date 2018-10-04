@@ -15,7 +15,7 @@ MainComponent::MainComponent()
 	 * with the sequencer_. 
 	 * Internally this creates a std::weak_ptr inside the SequencerTracks.
 	 * The sequencer_ starts stepping automatically as its insantiation 
-	 * starts a new thread.
+	 * starts a new thread (by calling the overriden run() method).
 	 */
 	sequencer_ = std::make_shared<Sequencer>(NUM_SEQUENCER_STEPS, 140.0);
 
@@ -24,7 +24,6 @@ MainComponent::MainComponent()
 
 	sequencer_->addChangeListener(grid_row_kick_.get());
 	sequencer_->addChangeListener(grid_row_snare_.get());
-
 
 	/*
 	 * Start adding in GUI components - this should become more programmatic.
@@ -39,19 +38,13 @@ MainComponent::MainComponent()
 	
 	/*
 	 * Define sample assignment buttons.
-	 * We also need to make sure each button is hooked up to an event
+	 * We also connect each sampler_source to a row of buttons.
 	 */
-	for (auto& button : grid_row_kick_->sample_assigners_)
-	{
-		addAndMakeVisible(button.get());
-		button->addChangeListener(&sampler_source_kick_);
-	}
-	
-	for (auto& button : grid_row_snare_->sample_assigners_)
-	{
-		addAndMakeVisible(button.get());
-		button->addChangeListener(&sampler_source_snare_);
-	}
+	grid_row_kick_->add_and_make_visible(this);
+	grid_row_kick_->attach_sample(sampler_source_kick_);
+
+	grid_row_snare_->add_and_make_visible(this);
+	grid_row_snare_->attach_sample(sampler_source_snare_);
 
 	setup_text_button(play_button_, [this] { play_button_clicked(); }, "Play", Colours::green, false);
 	setup_text_button(stop_button_, [this] { stop_button_clicked(); }, "Stop", Colours::red, false);
@@ -59,6 +52,9 @@ MainComponent::MainComponent()
 	sampler_source_kick_.addChangeListener(this);
 	sampler_source_snare_.addChangeListener(this);
 	sequencer_->addChangeListener(this);
+
+	mixer_source_.addInputSource(&sampler_source_kick_, false);
+	mixer_source_.addInputSource(&sampler_source_snare_, false);
 
 	// Make sure you set the size of the component after
 	// you add any child components.
@@ -72,8 +68,6 @@ MainComponent::~MainComponent()
 
 void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRate)
 {
-	mixer_source_.addInputSource(&sampler_source_kick_, false);
-	mixer_source_.addInputSource(&sampler_source_snare_, false);
 	mixer_source_.prepareToPlay(samplesPerBlockExpected, sampleRate);
 }
 
@@ -91,8 +85,6 @@ void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFil
 void MainComponent::releaseResources()
 {
 	mixer_source_.releaseResources();
-	sampler_source_kick_.releaseResources();
-	sampler_source_snare_.releaseResources();
 }
 
 void MainComponent::paint (Graphics& g)
@@ -120,7 +112,6 @@ void MainComponent::resized()
 
 void MainComponent::changeListenerCallback(ChangeBroadcaster * source)
 {
-
 }
 
 void MainComponent::change_state(PlayState new_state)

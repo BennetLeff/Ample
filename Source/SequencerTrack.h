@@ -19,6 +19,7 @@
 
 #define NUM_SEQUENCER_STEPS 8
 
+class SampleSource;
 
 /* 
  * Small utility class used for SequencerStep buttons on gui.
@@ -37,24 +38,9 @@ public:
 	SequencerButton(const Colour& on_colour, const Colour& off_colour, const Colour& trigger_colour)
 		: on_colour_(on_colour), off_colour_(off_colour), triggered_colour_(trigger_colour) { }
 
-	void toggle()
-	{
-		if (is_on_)
-		{
-			setColour(TextButton::buttonColourId, on_colour_);
-		}
-		else
-			setColour(TextButton::buttonColourId, off_colour_);
-
-		/* No matter what updates, we should tell the Event associated with this button to update. */
-		// sendChangeMessage();
-	}
-
-	void trigger_sequencer_colour()
-	{
-		/* Changes the colour when the sequencer step is on this particular button. */
-		setColour(TextButton::buttonColourId, triggered_colour_);
-	}
+	void attach_sample_source(ChangeListener& sample_source);
+	void toggle();
+	void trigger_sequencer_colour();
 
 	bool is_on_ = false;
 
@@ -74,7 +60,7 @@ class Sequencer;
  * Sequencer updates. The global Sequencer acts as a Broadcaster which sends messages to
  * its recipient SequencerTrack(s) and other Listeners.
  */
-class SequencerTrack : public ChangeListener
+class SequencerTrack : public ChangeListener, public Component
 {
 public:
 	SequencerTrack(const std::shared_ptr<Sequencer>& main_sequencer);
@@ -83,11 +69,12 @@ public:
 
 	bool is_step_on(uint16_t step);
 
+	void add_and_make_visible(Component* parent);
+	void attach_sample(ChangeListener& sample_source);
 	void position_triggers(uint16_t y_offset = 0);
 	void update_trigger_button_colours(uint16_t step_to_update);
 
-	std::array<std::unique_ptr<SequencerButton>, NUM_SEQUENCER_STEPS> sample_assigners_;
-
 private:
+	std::array<std::unique_ptr<SequencerButton>, NUM_SEQUENCER_STEPS> sample_assigners_;
 	std::weak_ptr<Sequencer> sequencer_;
 };
