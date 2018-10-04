@@ -8,6 +8,7 @@
   ==============================================================================
 */
 
+#include <algorithm>
 #include <memory>
 #include <thread>
 
@@ -20,11 +21,6 @@ Sequencer::Sequencer(const size_t number_of_steps, const double tempo)
 	Thread("Sequencer Thread")
 {
 	steps_.resize(number_of_steps);
-	for (int i = 0; i < number_of_steps; i++)
-	{
-		clear_trigger(i);
-		// addChangeListener(&steps_.at(i));
-	}
 
 	startThread();
 }
@@ -71,13 +67,6 @@ void Sequencer::run()
 
 void Sequencer::play()
 {	
-	/*
-	 * If the current step is on, send a message that triggers sound, gui, etc.
-	 *	Currently, this should trigger:
-	 *	  - Any associated SampleSource to play audio.
-	 */
-
-	
 	/*
 	 * Send message that sequencer step is updated. This should update Listeners including
 	 *  - Each associated SequencerTrack: to update the step colours

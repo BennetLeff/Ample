@@ -35,8 +35,6 @@ SequencerTrack::SequencerTrack(const std::shared_ptr<Sequencer>& main_sequencer)
 	for (auto& button : sample_assigners_)
 	{
 		button = std::make_unique<SequencerButton>();
-		button->setColour(TextButton::buttonColourId, Colours::greenyellow);
-		button->is_on_ = false;
 	
 		/*
 		 *  When a button is clicked it should toggle its on/off state and change color.

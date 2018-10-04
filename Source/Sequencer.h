@@ -10,31 +10,11 @@
 
 #pragma once
 
-// #include <functional>
 #include <vector>
 
 #include "SequencerTrack.h"
 
 class SequencerButton;
-
-/*
- * It may at first seem counterintuitive for an object to be a 
- * broadcaster and a listener. However, this is necessary as each
- * Event must be updated when the corresponding SequencerButton is
- * toggled on or off, and they must Broadcast to some number of 
- * behaviours. A typical example is Broadcasting to a SampleSource
- * to play or stop.
- */
-//class Event : public ChangeBroadcaster, public ChangeListener
-//{
-//public:
-//	Event() : on_(false) { }
-//	Event(const Event& ev) : on_(ev.on_) { }
-//
-//	void changeListenerCallback(ChangeBroadcaster* source) override;
-//
-//	bool on_ = false;
-//};
 
 class Sequencer : public ChangeBroadcaster, public Thread
 {

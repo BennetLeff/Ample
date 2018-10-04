@@ -33,16 +33,18 @@ class SequencerButton : public ChangeBroadcaster, public TextButton
 {
 public:
 	SequencerButton()
-		: on_colour_(Colours::yellow), off_colour_(Colours::greenyellow), triggered_colour_(Colours::tomato) { } 
+		: on_colour_(Colours::yellow), off_colour_(Colours::greenyellow), triggered_colour_(Colours::tomato),
+			is_on_(false) { } 
 
 	SequencerButton(const Colour& on_colour, const Colour& off_colour, const Colour& trigger_colour)
-		: on_colour_(on_colour), off_colour_(off_colour), triggered_colour_(trigger_colour) { }
+		: on_colour_(on_colour), off_colour_(off_colour), triggered_colour_(trigger_colour),
+			is_on_(false) { }
 
 	void attach_sample_source(ChangeListener& sample_source);
 	void toggle();
 	void trigger_sequencer_colour();
 
-	bool is_on_ = false;
+	bool is_on_;
 
 private:
 	Colour on_colour_;
