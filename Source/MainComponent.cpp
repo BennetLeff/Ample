@@ -13,7 +13,7 @@ MainComponent::MainComponent()
 	/*
 	 * Initialize Sequencer and follow by initializing all SequencerTrack objects
 	 * with the sequencer_. 
-	 * Internally this creates a std::weak_ptr inside the SequencerTracks.
+	 * Internally this creates a std::weak_ptr to sequencer_ inside each SequencerTrack.
 	 * The sequencer_ starts stepping automatically as its insantiation 
 	 * starts a new thread (by calling the overriden run() method).
 	 */
@@ -27,13 +27,9 @@ MainComponent::MainComponent()
 		seq_track = std::make_unique<SequencerTrack>(sequencer_);
 		sequencer_->addChangeListener(seq_track.get());
 
-		/*
-		 * Add the MainComponent as a parent to each SequencerTrack.
-		 * Internally this makes each SequencerTrack visible.
-		 * This is an ugly way to do this so I'll be fixing it later.
-		 */
-		seq_track->add_and_make_visible(this);
 		// seq_track->attach_sample()
+		addAndMakeVisible(seq_track.get());
+		seq_track->add_and_make_visible();
 	}
 
 	sequencer_tracks_.at(0)->attach_sample(sampler_source_kick_);

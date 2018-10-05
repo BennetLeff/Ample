@@ -71,12 +71,13 @@ public:
 
 	bool is_step_on(uint16_t step);
 
-	void add_and_make_visible(Component* parent);
+	void add_and_make_visible();
 	void attach_sample(ChangeListener& sample_source);
 	void position_triggers(uint16_t y_offset = 0);
 	void update_trigger_button_colours(uint16_t step_to_update);
 
-private:
 	std::array<std::unique_ptr<SequencerButton>, NUM_SEQUENCER_STEPS> sample_assigners_;
+private:
+
 	std::weak_ptr<Sequencer> sequencer_;
 };

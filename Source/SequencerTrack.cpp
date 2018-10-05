@@ -45,13 +45,12 @@ SequencerTrack::SequencerTrack(const std::shared_ptr<Sequencer>& main_sequencer)
 			button->is_on_ = !button->is_on_;
 			button->toggle();
 		};
-
-		addAndMakeVisible(button.get());
 	}
 }
 
-void SequencerTrack::add_and_make_visible(Component* parent)
+void SequencerTrack::add_and_make_visible()
 {
+	auto parent = getParentComponent();
 	std::for_each(sample_assigners_.begin(), sample_assigners_.end(),
 		[parent](auto& button) { parent->addAndMakeVisible(button.get()); });
 }
