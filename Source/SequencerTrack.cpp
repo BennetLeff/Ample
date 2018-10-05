@@ -8,6 +8,8 @@
   ==============================================================================
 */
 
+#include <algorithm>
+
 #include "SequencerTrack.h"
 
 void SequencerButton::attach_sample_source(ChangeListener& sample_source)
@@ -50,14 +52,14 @@ SequencerTrack::SequencerTrack(const std::shared_ptr<Sequencer>& main_sequencer)
 
 void SequencerTrack::add_and_make_visible(Component* parent)
 {
-	for (auto& button : this->sample_assigners_)
-		parent->addAndMakeVisible(button.get());
+	std::for_each(sample_assigners_.begin(), sample_assigners_.end(),
+		[parent](auto& button) { parent->addAndMakeVisible(button.get()); });
 }
 
 void SequencerTrack::attach_sample(ChangeListener& sample_source)
 {
-	for (auto& button : sample_assigners_)
-		button->attach_sample_source(sample_source);
+	std::for_each(sample_assigners_.begin(), sample_assigners_.end(),
+		[&sample_source](auto& button) { button->attach_sample_source(sample_source); });
 }
 
 void SequencerTrack::changeListenerCallback(ChangeBroadcaster* source)
@@ -73,6 +75,7 @@ void SequencerTrack::changeListenerCallback(ChangeBroadcaster* source)
 	 */
 	auto sequencer_source = static_cast<Sequencer*>(source);
 	auto cur_step = sequencer_source->current_step();
+
 	if (is_step_on(cur_step))
 		sample_assigners_.at(cur_step)->sendChangeMessage();
 	update_trigger_button_colours(cur_step);
@@ -86,11 +89,8 @@ bool SequencerTrack::is_step_on(uint16_t step)
 void SequencerTrack::position_triggers(uint16_t y_offset)
 {
 	int i = 200;
-	for (auto& button : sample_assigners_)
-	{
-		button->setBounds(i, 200 + y_offset, 40, 40);
-		i += 50;
-	}
+	std::for_each(sample_assigners_.begin(), sample_assigners_.end(),
+		[i, y_offset](auto& button) mutable { button->setBounds(i, 200 + y_offset, 40, 40); i += 50; });
 }
 
 void SequencerTrack::update_trigger_button_colours(uint16_t step_to_update)
