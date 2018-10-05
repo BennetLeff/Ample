@@ -112,8 +112,7 @@ void SampleSource::start()
 	{
 		/* 
 		 * Once is_playing_ is set to true, the getNextAudioBlock method should
-		 * be able to start playing audio. If is_playing_ is false, it will return
-		 * and clear the active audio buffer.
+		 * be able to start playing audio.
 		 */
 		is_playing_ = true;
 		sendChangeMessage();

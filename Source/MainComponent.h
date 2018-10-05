@@ -13,7 +13,7 @@
     This component lives inside our window, and this is where you should put all
     your controls and content.
 */
-class MainComponent : public AudioAppComponent, public ChangeListener
+class MainComponent : public AudioAppComponent
 {
 public:
     MainComponent();
@@ -25,8 +25,6 @@ public:
 
     void paint (Graphics& g) override;
     void resized() override;
-
-	void changeListenerCallback(ChangeBroadcaster* source) override;
 private:
 	enum class PlayState
 	{
@@ -44,7 +42,6 @@ private:
 	MixerAudioSource mixer_source_;
 	SampleSource sampler_source_kick_;
 	SampleSource sampler_source_snare_;
-	// Sequencer sequencer_;
 	std::shared_ptr<Sequencer> sequencer_;
 
 	static const uint16_t num_sequencer_tracks_ = 2;

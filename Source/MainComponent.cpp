@@ -49,10 +49,6 @@ MainComponent::MainComponent()
 
 	setup_text_button(play_button_, [this] { play_button_clicked(); }, "Play", Colours::green, false);
 	setup_text_button(stop_button_, [this] { stop_button_clicked(); }, "Stop", Colours::red, false);
-	
-	sampler_source_kick_.addChangeListener(this);
-	sampler_source_snare_.addChangeListener(this);
-	sequencer_->addChangeListener(this);
 
 	mixer_source_.addInputSource(&sampler_source_kick_, false);
 	mixer_source_.addInputSource(&sampler_source_snare_, false);
@@ -109,10 +105,6 @@ void MainComponent::resized()
 
 	sequencer_tracks_.at(0)->position_triggers(0);
 	sequencer_tracks_.at(1)->position_triggers(60);
-}
-
-void MainComponent::changeListenerCallback(ChangeBroadcaster * source)
-{
 }
 
 void MainComponent::change_state(PlayState new_state)
