@@ -5,6 +5,7 @@
 
 #include "JuceHeader.h"
 
+#include "FileList.h"
 #include "SampleSource.h"
 #include "Sequencer.h"
 #include "SequencerTrack.h"
