@@ -35,6 +35,9 @@ private:
 		Stopping
 	} state_;
 
+	const String xml_file_path_ = "C:/Users/bennet/Documents/Ample/Resources";
+	std::unique_ptr<FileList> file_listing_; // (xml_file_path_);
+
 	TextButton open_button_kick_; 
 	TextButton open_button_snare_;
 	TextButton play_button_;

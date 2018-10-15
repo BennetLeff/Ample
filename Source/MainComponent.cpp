@@ -27,19 +27,18 @@ MainComponent::MainComponent()
 		seq_track = std::make_unique<SequencerTrack>(sequencer_);
 		sequencer_->addChangeListener(seq_track.get());
 
-		// seq_track->attach_sample()
-		addAndMakeVisible(seq_track.get());
-		seq_track->add_and_make_visible();
+		//addAndMakeVisible(seq_track.get());
+		//seq_track->add_and_make_visible();
 	}
 
 	sequencer_tracks_.at(0)->attach_sample(sampler_source_kick_);
 	sequencer_tracks_.at(1)->attach_sample(sampler_source_snare_);
 
-	addAndMakeVisible(&open_button_kick_);
+	//addAndMakeVisible(&open_button_kick_);
 	open_button_kick_.setButtonText("Open Kick...");
 	open_button_kick_.onClick = [this] { open_button_kick_clicked(); };
 	
-	addAndMakeVisible(&open_button_snare_);
+	//addAndMakeVisible(&open_button_snare_);
 	open_button_snare_.setButtonText("Open Snare...");
 	open_button_snare_.onClick = [this] { open_button_snare_clicked(); };
 
@@ -48,6 +47,10 @@ MainComponent::MainComponent()
 
 	mixer_source_.addInputSource(&sampler_source_kick_, false);
 	mixer_source_.addInputSource(&sampler_source_snare_, false);
+
+
+	file_listing_ = std::make_unique<FileList>(xml_file_path_);
+	addAndMakeVisible(file_listing_.get());
 
 	// Make sure you set the size of the component after
 	// you add any child components.
@@ -99,8 +102,10 @@ void MainComponent::resized()
 	play_button_.setBounds(10, 70, getWidth() - 20, 20);
 	stop_button_.setBounds(10, 100, getWidth() - 20, 20);
 
-	sequencer_tracks_.at(0)->position_triggers(0);
-	sequencer_tracks_.at(1)->position_triggers(60);
+	for (int i = 0; i < sequencer_tracks_.size(); i++)
+		sequencer_tracks_.at(i)->position_triggers( i * 60);
+
+	file_listing_->setBounds(getLocalBounds());
 }
 
 void MainComponent::change_state(PlayState new_state)
@@ -173,7 +178,7 @@ void MainComponent::play_button_clicked()
 
 void MainComponent::setup_text_button(TextButton& button, std::function<void()> on_click, const String& text, const Colour& colour, const bool on_or_off)
 {
-	addAndMakeVisible(button);
+	// addAndMakeVisible(button);
 	button.onClick = on_click;
 	button.setButtonText(text);
 	button.setColour(TextButton::buttonColourId, colour);

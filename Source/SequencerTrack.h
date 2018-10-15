@@ -73,6 +73,9 @@ public:
 
 	void add_and_make_visible();
 	void attach_sample(ChangeListener& sample_source);
+	/*
+	 * position_triggers offsets a SequencerTrack's buttons.
+	 */
 	void position_triggers(uint16_t y_offset = 0);
 	void update_trigger_button_colours(uint16_t step_to_update);
 
