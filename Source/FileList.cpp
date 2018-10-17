@@ -10,9 +10,13 @@
 
 #include "FileList.h"
 
-FileList::FileList(const String& file_path)
+FileList::FileList(const String& folder_path)
 {
-	load_xml_file(file_path);
+	const String xml_file_string = create_xml_file(folder_path);
+	File xml_file(folder_path + "/TableData2.xml");
+		
+	xml_file.replaceWithText(xml_file_string);
+	load_xml_file(folder_path);
 
 	addAndMakeVisible(table);
 
@@ -177,6 +181,62 @@ void FileList::load_xml_file(const String& file_path)
 
 		num_rows_ = data_list_->getNumChildElements();
 	}
+}
+
+const String FileList::create_xml_file(const String& folder_path)
+{
+	XmlElement table_data("TABLE_DATA");
+	XmlElement* headers = new XmlElement("HEADERS");
+	
+	auto header_col_0 = new XmlElement("COLUMN");
+	header_col_0->setAttribute("columnId", "1");
+	header_col_0->setAttribute("name", "ID");
+	header_col_0->setAttribute("width", "50");
+
+	auto header_col_1 = new XmlElement("COLUMN");
+	header_col_1->setAttribute("columnId", "2");
+	header_col_1->setAttribute("name", "Name");
+	header_col_1->setAttribute("width", "200");
+	
+	auto header_col_2 = new XmlElement("COLUMN");
+	header_col_2->setAttribute("columnId", "3");
+	header_col_2->setAttribute("name", "Description");
+	header_col_2->setAttribute("width", "300");
+	
+	auto header_col_3 = new XmlElement("COLUMN");
+	header_col_3->setAttribute("columnId", "4");
+	header_col_3->setAttribute("name", "ID");
+	header_col_3->setAttribute("width", "50");
+
+	headers->addChildElement(header_col_0);
+	headers->addChildElement(header_col_1);
+	headers->addChildElement(header_col_2);
+	headers->addChildElement(header_col_3);
+
+	XmlElement* data = new XmlElement("DATA");
+
+	DirectoryIterator iter(File(folder_path), true, "*.wav");
+	int count = 1;
+	while (iter.next())
+	{
+		XmlElement* row = new XmlElement("Sample");
+
+		row->setAttribute("ID", "0");
+		row->setAttribute("Name", iter.getFile().getFileName());
+		row->setAttribute("Description", "...");
+		row->setAttribute("Select", String(count));
+		
+		count++;
+
+		data->addChildElement(row);
+	}
+
+	table_data.addChildElement(headers);
+	table_data.addChildElement(data);
+
+	auto doc = table_data.createDocument(String());
+
+	return doc;
 }
 
 const String& FileList::get_attribute_name_for_column_id(const int columnId) const

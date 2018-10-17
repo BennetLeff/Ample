@@ -6,7 +6,7 @@ class FileList : public Component,
 				 public TableListBoxModel
 {
 public:
-	FileList(const String& file_path);
+	FileList(const String& folder_path);
 
 	void paintRowBackground(Graphics& g, int rowNumber, 
 		int /*width*/, int /*height*/, bool rowIsSelected) override;
@@ -28,7 +28,9 @@ public:
 	String get_text(const int column_number, const int row_number) const;
 
 private:
+	const String create_xml_file(const String& folder_path);
 	void load_xml_file(const String& file_path);
+
 	const String& get_attribute_name_for_column_id(const int columnId) const;
 
 	TableListBox table{ {}, this };
