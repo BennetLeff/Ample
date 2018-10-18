@@ -48,7 +48,6 @@ MainComponent::MainComponent()
 	mixer_source_.addInputSource(&sampler_source_kick_, false);
 	mixer_source_.addInputSource(&sampler_source_snare_, false);
 
-
 	file_listing_ = std::make_unique<FileList>(xml_file_path_);
 	addAndMakeVisible(file_listing_.get());
 
