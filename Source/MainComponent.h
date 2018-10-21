@@ -1,5 +1,8 @@
 #pragma once
 
+#define MAIN_COMP_WIDTH 800
+#define MAIN_COMP_HEIGHT 600
+
 #include <array>
 #include <utility>
 
@@ -10,11 +13,18 @@
 #include "Sequencer.h"
 #include "SequencerTrack.h"
 
+#include "MainScene.h"
+
+class FileListingScene : public Component
+{
+
+};
+
 /*
     This component lives inside our window, and this is where you should put all
     your controls and content.
 */
-class MainComponent : public AudioAppComponent
+class MainComponent : public AudioAppComponent, public KeyListener
 {
 public:
     MainComponent();
@@ -26,6 +36,10 @@ public:
 
     void paint (Graphics& g) override;
     void resized() override;
+
+    bool keyPressed(const KeyPress& key, Component* originating_component) override;
+    bool keyStateChanged(bool key_is_down, Component* originating_component) override;
+
 private:
 	enum class PlayState
 	{
@@ -35,28 +49,10 @@ private:
 		Stopping
 	} state_;
 
-	const String xml_file_path_ = "C:/Users/bennet/Documents/Ample/Resources";
-	std::unique_ptr<FileList> file_listing_; // (xml_file_path_);
+	std::unique_ptr<MainScene> main_scene;
 
-	TextButton open_button_kick_; 
-	TextButton open_button_snare_;
-	TextButton play_button_;
-	TextButton stop_button_;
-
-	MixerAudioSource mixer_source_;
-	SampleSource sampler_source_kick_;
-	SampleSource sampler_source_snare_;
-	std::shared_ptr<Sequencer> sequencer_;
-
-	static const uint16_t num_sequencer_tracks_ = 2;
-	std::array< std::unique_ptr<SequencerTrack>, num_sequencer_tracks_> sequencer_tracks_;
-
-	void change_state(PlayState new_state);
-	void open_button_kick_clicked(); 
-	void open_button_snare_clicked();
-	void play_button_clicked();
-	void setup_text_button(TextButton& button, std::function<void()> on_click, const String& text, const Colour& colour, const bool on_or_off);
-	void stop_button_clicked();
+	// const String xml_file_path_ = "C:/Users/bennet/Documents/Ample/Resources";
+	// std::unique_ptr<FileList> file_listing_; // (xml_file_path_);
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };

@@ -51,7 +51,7 @@ public:
             setContentOwned (new MainComponent(), true);
             setResizable (true, true);
 
-            centreWithSize (getWidth(), getHeight());
+            centreWithSize (MAIN_COMP_WIDTH, MAIN_COMP_HEIGHT); //getWidth(), getHeight());
             setVisible (true);
         }
 
