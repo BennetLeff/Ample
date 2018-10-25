@@ -100,7 +100,7 @@ Component* FileList::refreshComponentForCell(int row_number, int column_id, bool
 		return selection_box;
 	}
 
-	if (column_id == 3)
+	if (column_id == 3 || column_id == 5)
 	{
 		auto* text_label = static_cast<EditableTextCustomComponent*> (existing_component_to_update);
 
@@ -170,7 +170,7 @@ void FileList::load_xml_file(const String& file_path)
 	while (!dir.getChildFile("Resources").exists() && numTries++ < 15)
 		dir = dir.getParentDirectory();
 
-	auto tableFile = dir.getChildFile("Resources").getChildFile("TableData.xml");
+	auto tableFile = dir.getChildFile("Resources").getChildFile("TableData2.xml");
 
 	if (tableFile.exists())
 	{
@@ -205,13 +205,19 @@ const String FileList::create_xml_file(const String& folder_path)
 	
 	auto header_col_3 = new XmlElement("COLUMN");
 	header_col_3->setAttribute("columnId", "4");
-	header_col_3->setAttribute("name", "ID");
+	header_col_3->setAttribute("name", "Selected");
 	header_col_3->setAttribute("width", "50");
+
+	auto header_col_4 = new XmlElement("COLUMN");
+	header_col_4->setAttribute("columnId", "5");
+	header_col_4->setAttribute("name", "TrackAssignment");
+	header_col_4->setAttribute("width", "300");
 
 	headers->addChildElement(header_col_0);
 	headers->addChildElement(header_col_1);
 	headers->addChildElement(header_col_2);
 	headers->addChildElement(header_col_3);
+	headers->addChildElement(header_col_4);
 
 	XmlElement* data = new XmlElement("DATA");
 
@@ -221,10 +227,11 @@ const String FileList::create_xml_file(const String& folder_path)
 	{
 		XmlElement* row = new XmlElement("Sample");
 
-		row->setAttribute("ID", "0");
+		row->setAttribute("ID", count);
 		row->setAttribute("Name", iter.getFile().getFileName());
 		row->setAttribute("Description", "...");
 		row->setAttribute("Select", String(count));
+		row->setAttribute("TrackAssignment", "");
 		
 		count++;
 
