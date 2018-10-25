@@ -38,8 +38,8 @@ MainScene::MainScene()
 	open_button_snare_.setButtonText("Open Snare...");
 	open_button_snare_.onClick = [this] { open_button_snare_clicked(); };
 
-	// setup_text_button(play_button_, [this] { play_button_clicked(); }, "Play", Colours::green, false);
-	// setup_text_button(stop_button_, [this] { stop_button_clicked(); }, "Stop", Colours::red, false);
+	setup_text_button(play_button_, [this] { /* does nothing */ }, "Play [Does nothing atm]", Colours::green, false);
+	setup_text_button(stop_button_, [this] { /* does nothing */ }, "Stop [Does nothing atm]", Colours::red, false);
 
 	mixer_source_.addInputSource(&sampler_source_kick_, false);
 	mixer_source_.addInputSource(&sampler_source_snare_, false);

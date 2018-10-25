@@ -10,14 +10,14 @@ MainComponent::MainComponent()
     // specify the number of input and output channels that we want to open
     setAudioChannels (0, 2);
 
-//    main_scene = std::make_unique<MainScene>();
-//    addAndMakeVisible(main_scene.get());
-//    main_scene->setSize(MAIN_COMP_WIDTH, MAIN_COMP_HEIGHT);
+    main_scene = std::make_unique<MainScene>();
+    addAndMakeVisible(main_scene.get());
+    main_scene->setSize(MAIN_COMP_WIDTH, MAIN_COMP_HEIGHT);
 
     file_listing_scene = std::make_unique<FileListingScene>(xml_file_path_);
-    addAndMakeVisible(file_listing_scene.get());
+    //addAndMakeVisible(file_listing_scene.get());
+    addChildComponent(file_listing_scene.get());
     file_listing_scene->setSize(MAIN_COMP_WIDTH, MAIN_COMP_HEIGHT);
-
 
     addKeyListener(this);
 
@@ -33,12 +33,11 @@ MainComponent::~MainComponent()
 
 void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRate)
 {
-	// mixer_source_.prepareToPlay(samplesPerBlockExpected, sampleRate);
 }
 
 void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill)
 {
-    // main_scene->play(bufferToFill);
+    main_scene->play(bufferToFill);
 }
 
 void MainComponent::releaseResources()
@@ -58,19 +57,19 @@ void MainComponent::resized()
 
 bool MainComponent::keyPressed(const KeyPress& key, Component* originating_component)
 {
-    // Logger::writeToLog("Key Pressed... ");
-
     if (key == key.leftKey)
     {
-        // main_component->setVisible(false);
-        Logger::writeToLog("Left Key Pressed");
-
+        main_scene->setVisible(true);
+        file_listing_scene->setVisible(false);
     }
 
     else if (key == key.rightKey)
     {
-        Logger::writeToLog("Right Key Pressed");
+        main_scene->setVisible(false);
+        file_listing_scene->setVisible(true);
     }
+
+    grabKeyboardFocus();
 
     return true;
 }
