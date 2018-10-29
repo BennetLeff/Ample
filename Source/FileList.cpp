@@ -18,16 +18,16 @@ FileList::FileList(const String& folder_path)
 	xml_file.replaceWithText(xml_file_string);
 	load_xml_file(folder_path);
 
-	addAndMakeVisible(table);
+	addAndMakeVisible(table_);
 
-	table.setColour(ListBox::outlineColourId, Colours::grey);
-	table.setOutlineThickness(1);
+	table_.setColour(ListBox::outlineColourId, Colours::grey);
+	table_.setOutlineThickness(1);
 
 	if (column_list_ != nullptr)
 	{
 		forEachXmlChildElement(*column_list_, columnXml)
 		{
-			table.getHeader().addColumn(columnXml->getStringAttribute("name"),
+			table_.getHeader().addColumn(columnXml->getStringAttribute("name"),
 				columnXml->getIntAttribute("columnId"),
 				columnXml->getIntAttribute("width"),
 				50,
@@ -36,10 +36,10 @@ FileList::FileList(const String& folder_path)
 		}
 	}
 
-	table.getHeader().setSortColumnId(1, true);
-	table.getHeader().setColumnVisible(8, false);
+	table_.getHeader().setSortColumnId(1, true);
+	table_.getHeader().setColumnVisible(8, false);
 
-	table.setMultipleSelectionEnabled(true);
+	table_.setMultipleSelectionEnabled(true);
 }
 
 int FileList::getNumRows()
@@ -62,7 +62,7 @@ void FileList::paintCell(Graphics& g, int row_number, int column_id,
 							int width, int height, bool row_is_selected)
 {
 	g.setColour(row_is_selected ? Colours::darkblue : getLookAndFeel().findColour(ListBox::textColourId));
-	g.setFont(font);
+	g.setFont(font_);
 
 	if (auto* row_element = data_list_->getChildElement(row_number))
 	{
@@ -82,7 +82,7 @@ void FileList::sortOrderChanged(int new_sort_column_id, bool is_forwards)
 		DataSorter sorter(get_attribute_name_for_column_id(new_sort_column_id), is_forwards);
 		data_list_->sortChildElements(sorter);
 
-		table.updateContent();
+		table_.updateContent();
 	}
 }
 
@@ -91,10 +91,10 @@ Component* FileList::refreshComponentForCell(int row_number, int column_id, bool
 {
 	if (column_id == 4)
 	{
-		auto* selection_box = static_cast<SelectionColumnCustomComponent*> (existing_component_to_update);
+		auto* selection_box = static_cast<SelectionBox*> (existing_component_to_update);
 
 		if (selection_box == nullptr)
-			selection_box = new SelectionColumnCustomComponent(*this);
+			selection_box = new SelectionBox(*this);
 
 		selection_box->setRowAndColumn(row_number, column_id);
 		return selection_box;
@@ -102,10 +102,10 @@ Component* FileList::refreshComponentForCell(int row_number, int column_id, bool
 
 	if (column_id == 3 || column_id == 5)
 	{
-		auto* text_label = static_cast<EditableTextCustomComponent*> (existing_component_to_update);
+		auto* text_label = static_cast<EditableTextBox*> (existing_component_to_update);
 
 		if (text_label == nullptr)
-			text_label = new EditableTextCustomComponent(*this);
+			text_label = new EditableTextBox(*this);
 
 		text_label->setRowAndColumn(row_number, column_id);
 		return text_label;
@@ -128,7 +128,7 @@ int FileList::getColumnAutoSizeWidth(int columnId)
 		{
 			auto text = row_element->getStringAttribute(get_attribute_name_for_column_id(columnId));
 
-			widest = jmax(widest, font.getStringWidth(text));
+			widest = jmax(widest, font_.getStringWidth(text));
 		}
 	}
 
@@ -152,13 +152,13 @@ String FileList::get_text(const int column_number, const int row_number) const
 
 void FileList::set_text(const int column_number, const int row_number, const String& new_text)
 {
-	const auto& columnName = table.getHeader().getColumnName(column_number);
+	const auto& columnName = table_.getHeader().getColumnName(column_number);
 	data_list_->getChildElement(row_number)->setAttribute(columnName, new_text);
 }
 
 void FileList::resized()
 {
-	table.setBoundsInset(BorderSize<int>(8));
+	table_.setBoundsInset(BorderSize<int>(8));
 }
 
 void FileList::load_xml_file(const String& file_path)

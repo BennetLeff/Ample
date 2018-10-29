@@ -43,8 +43,7 @@ private:
 	std::unique_ptr<MainScene> main_scene;
 	std::unique_ptr<FileListingScene> file_listing_scene;
 
-	const String xml_file_path_ = "/home/bennet/Documents/Workspace/Ample/Resources";
-	// std::unique_ptr<FileList> file_listing_; // (xml_file_path_);
+	const String xml_file_path_ = "~/Documents/Workspace/Ample/Resources";
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };

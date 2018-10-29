@@ -27,107 +27,121 @@ public:
 
 	String get_text(const int column_number, const int row_number) const;
 
+	/*
+	 * 8 possible tracks at the moment which are each assigned to by an audio file in the FileList xml.
+	 * track_assignment_index_ is an array of length n where each element is the file path that corresponds to a given
+	 * file to be played and triggered in a SequencerTrack with SampleSources.
+	 * For example, in the FileList gui, setting track 1 to ".../kick.wav" should set the sample on SequencerTrack 1
+	 * to ".../kick.wav".
+	 */
+	std::array<String, 8> track_assignment_index_;
+    TableListBox table_{ {}, this };
 private:
 	const String create_xml_file(const String& folder_path);
 	void load_xml_file(const String& file_path);
 
 	const String& get_attribute_name_for_column_id(const int columnId) const;
 
-	TableListBox table{ {}, this };
-	Font font{ 14.0f };
+	Font font_{ 14.0f };
 
 	std::unique_ptr<XmlElement> xml_data_;
 	XmlElement* column_list_ = nullptr;
 	XmlElement* data_list_ = nullptr;
 	int num_rows_ = 0;
 
-	class EditableTextCustomComponent : public Label
-	{
-	public:
-		EditableTextCustomComponent(FileList& td)
-			: owner_(td)
-		{
-			setEditable(false, true, false);
-		}
+    class EditableTextBox : public Label
+    {
+    public:
+        EditableTextBox(FileList& td)
+                : owner_(td)
+        {
+            setEditable(false, true, false);
+        }
 
-		void mouseDown(const MouseEvent& event) override
-		{
-			owner_.table.selectRowsBasedOnModifierKeys(row, event.mods, false);
+        void mouseDown(const MouseEvent& event) override
+        {
+            owner_.table_.selectRowsBasedOnModifierKeys(row, event.mods, false);
 
-			Label::mouseDown(event);
-		}
+            Label::mouseDown(event);
+        }
 
-		void textWasEdited() override
-		{
-			owner_.set_text(column_id_, row, getText());
-		}
+        void textWasEdited() override
+        {
+            owner_.set_text(column_id_, row, getText());
 
-		void setRowAndColumn(const int newRow, const int newColumn)
-		{
-			row = newRow;
-			column_id_ = newColumn;
-			setText(owner_.get_text(column_id_, row), dontSendNotification);
-		}
+            owner_.track_assignment_index_.at(row) = getText();
+        }
 
-	private:
-		FileList& owner_;
-		int row, column_id_;
-		Colour text_colour_;
-	};
+        void setRowAndColumn(const int newRow, const int newColumn)
+        {
+            row = newRow;
+            column_id_ = newColumn;
+            setText(owner_.get_text(column_id_, row), sendNotificationAsync);
+        }
 
-	class SelectionColumnCustomComponent : public Component
-	{
-	public:
-		SelectionColumnCustomComponent(FileList& td)
-			: owner_(td)
-		{
-			addAndMakeVisible(toggle_button_);
+    private:
+        FileList& owner_;
+        int row, column_id_;
+        Colour text_colour_;
+    };
 
-			toggle_button_.onClick = [this] { owner_.set_selection(row, (int)toggle_button_.getToggleState()); };
-		}
+    class SelectionBox : public Component
+    {
+    public:
+        SelectionBox(FileList& td)
+                : owner_(td),
+                  row_(0), column_id_(0)
+        {
+            addAndMakeVisible(toggle_button_);
 
-		void resized() override
-		{
-			toggle_button_.setBoundsInset(BorderSize<int>(2));
-		}
+            toggle_button_.onClick = [this] { owner_.set_selection(row_, (int)toggle_button_.getToggleState()); };
+        }
 
-		void setRowAndColumn(int newRow, int newColumn)
-		{
-			row = newRow;
-			column_id_ = newColumn;
-			toggle_button_.setToggleState((bool)owner_.get_selection(row), dontSendNotification);
-		}
+        void resized() override
+        {
+            toggle_button_.setBoundsInset(BorderSize<int>(2));
+        }
 
-	private:
-		FileList& owner_;
-		ToggleButton toggle_button_;
-		int row, column_id_;
-	};
+        void setRowAndColumn(int newRow, int newColumn)
+        {
+            row_ = newRow;
+            column_id_ = newColumn;
+            toggle_button_.setToggleState((bool)owner_.get_selection(row_), sendNotificationAsync);
+        }
 
-	class DataSorter
-	{
-	public:
-		DataSorter(const String& attribute_to_sort_by, bool forwards)
-			: attribute_to_sort_(attribute_to_sort_by),
-			direction_(forwards ? 1 : -1)
-		{}
+    private:
+        FileList& owner_;
+        ToggleButton toggle_button_;
+        int16_t row_;
+        int16_t column_id_;
+    };
 
-		int compareElements(XmlElement* first, XmlElement* second) const
-		{
-			auto result = first->getStringAttribute(attribute_to_sort_)
-				.compareNatural(second->getStringAttribute(attribute_to_sort_));
+    class DataSorter
+    {
+    public:
+        DataSorter(const String& attribute_to_sort_by, bool forwards)
+                : attribute_to_sort_(attribute_to_sort_by),
+                  direction_(forwards ? 1 : -1)
+        {}
 
-			if (result == 0)
-				result = first->getStringAttribute("ID")
-				.compareNatural(second->getStringAttribute("ID"));
+        int compareElements(XmlElement* first, XmlElement* second) const
+        {
+            auto result = first->getStringAttribute(attribute_to_sort_)
+                    .compareNatural(second->getStringAttribute(attribute_to_sort_));
 
-			return direction_ * result;
-		}
+            if (result == 0)
+                result = first->getStringAttribute("ID")
+                        .compareNatural(second->getStringAttribute("ID"));
 
-	private:
-		const String attribute_to_sort_;
-		const int direction_;
-	};
+            return direction_ * result;
+        }
+
+    private:
+        const String attribute_to_sort_;
+        const int direction_;
+    };
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(FileList)
 };
+
+
