@@ -89,26 +89,38 @@ void FileList::sortOrderChanged(int new_sort_column_id, bool is_forwards)
 Component* FileList::refreshComponentForCell(int row_number, int column_id, bool /*isRowSelected*/,
 	Component* existing_component_to_update)
 {
-	if (column_id == 4)
+    switch (column_id)
 	{
-		auto* selection_box = static_cast<SelectionBox*> (existing_component_to_update);
+	    case 3:
+        {
+            auto* text_label = static_cast<EditableTextBox*> (existing_component_to_update);
 
-		if (selection_box == nullptr)
-			selection_box = new SelectionBox(*this);
+            if (text_label == nullptr)
+                text_label = new EditableTextBox(*this);
 
-		selection_box->setRowAndColumn(row_number, column_id);
-		return selection_box;
-	}
+            text_label->setRowAndColumn(row_number, column_id);
+            return text_label;
+        }
+	    case 4:
+        {
+            auto* selection_box = static_cast<SelectionBox*> (existing_component_to_update);
 
-	if (column_id == 3 || column_id == 5)
-	{
-		auto* text_label = static_cast<EditableTextBox*> (existing_component_to_update);
+            if (selection_box == nullptr)
+                selection_box = new SelectionBox(*this);
 
-		if (text_label == nullptr)
-			text_label = new EditableTextBox(*this);
+            selection_box->setRowAndColumn(row_number, column_id);
+            return selection_box;
+        }
+        case 5:
+        {
+            auto* track_assignment_entry = static_cast<EditableTextBox*> (existing_component_to_update);
 
-		text_label->setRowAndColumn(row_number, column_id);
-		return text_label;
+            if (track_assignment_entry == nullptr)
+                track_assignment_entry = new EditableTextBox(*this);
+
+            track_assignment_entry->setRowAndColumn(row_number, column_id);
+            return track_assignment_entry;
+        }
 	}
 
 	jassert(existing_component_to_update == nullptr);
