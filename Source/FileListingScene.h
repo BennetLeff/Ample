@@ -10,7 +10,7 @@
 class FileListingScene : public Component
 {
 public:
-    FileListingScene(const String& file_path);
+    FileListingScene(const String& file_path, ChangeListener* file_path_change_listener);
 
     void paint (Graphics& g) override;
     void resized() override;

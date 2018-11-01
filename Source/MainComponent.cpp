@@ -14,8 +14,9 @@ MainComponent::MainComponent()
     addAndMakeVisible(main_scene.get());
     main_scene->setSize(MAIN_COMP_WIDTH, MAIN_COMP_HEIGHT);
 
-    file_listing_scene = std::make_unique<FileListingScene>(xml_file_path_);
-    //addAndMakeVisible(file_listing_scene.get());
+    auto& track_one = main_scene->sequencer_tracks_.at(0);
+
+    file_listing_scene = std::make_unique<FileListingScene>(xml_file_path_, track_one.get());
     addChildComponent(file_listing_scene.get());
     file_listing_scene->setSize(MAIN_COMP_WIDTH, MAIN_COMP_HEIGHT);
 

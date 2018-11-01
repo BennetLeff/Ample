@@ -30,13 +30,13 @@ MainScene::MainScene()
 	sequencer_tracks_.at(0)->attach_sample(sampler_source_kick_);
 	sequencer_tracks_.at(1)->attach_sample(sampler_source_snare_);
 
-	addAndMakeVisible(&open_button_kick_);
-	open_button_kick_.setButtonText("Open Kick...");
-	open_button_kick_.onClick = [this] { open_button_kick_clicked(); };
+	// addAndMakeVisible(&open_button_kick_);
+	// open_button_kick_.setButtonText("Open Kick...");
+	// open_button_kick_.onClick = [this] { open_button_kick_clicked(); };
 
-	addAndMakeVisible(&open_button_snare_);
-	open_button_snare_.setButtonText("Open Snare...");
-	open_button_snare_.onClick = [this] { open_button_snare_clicked(); };
+	// addAndMakeVisible(&open_button_snare_);
+	// open_button_snare_.setButtonText("Open Snare...");
+	// open_button_snare_.onClick = [this] { open_button_snare_clicked(); };
 
 	setup_text_button(play_button_, [this] { /* does nothing */ }, "Play [Does nothing atm]", Colours::green, false);
 	setup_text_button(stop_button_, [this] { /* does nothing */ }, "Stop [Does nothing atm]", Colours::red, false);
@@ -72,8 +72,8 @@ void MainScene::resized()
     // This is called when the MainContentComponent is resized.
     // If you add any child components, this is where you should
     // update their positions.
-	open_button_kick_.setBounds(10, 10, getWidth() - 20, 20);
-	open_button_snare_.setBounds(10, 40, getWidth() - 20, 20);
+	// open_button_kick_.setBounds(10, 10, getWidth() - 20, 20);
+	// open_button_snare_.setBounds(10, 40, getWidth() - 20, 20);
 
 	play_button_.setBounds(10, 70, getWidth() - 20, 20);
 	stop_button_.setBounds(10, 100, getWidth() - 20, 20);

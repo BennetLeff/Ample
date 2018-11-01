@@ -2,11 +2,41 @@
 
 #include "JuceHeader.h"
 
+class TrackAssigner : public ChangeBroadcaster
+{
+    /*
+     * 8 possible tracks at the moment which are each assigned to by an audio file in the FileList xml.
+     * track_assignment_index_ is an array of length n where each element is the file path that corresponds to a given
+     * file to be played and triggered in a SequencerTrack with SampleSources.
+     * For example, in the FileList gui, setting track 1 to ".../kick.wav" should set the sample on SequencerTrack 1
+     * to ".../kick.wav".
+     */
+public:
+    TrackAssigner(ChangeListener* file_path_update_listener)
+    {
+        addChangeListener(file_path_update_listener);
+
+        track_assignment_index_.fill("");
+    }
+
+    void set_track(int position, const String& track_path) 
+    { 
+        // track_assignment_index_.at(position) = track_path;
+        track_assignment_index_.at(0) = "";
+
+        sendChangeMessage();
+    }
+
+    std::array<String, 8> track_assignment_index_;
+private:
+
+};
+
 class FileList : public Component,
 				 public TableListBoxModel
 {
 public:
-	FileList(const String& folder_path);
+	FileList(const String& folder_path, ChangeListener* file_path_update_listener);
 
 	void paintRowBackground(Graphics& g, int rowNumber, 
 		int /*width*/, int /*height*/, bool rowIsSelected) override;
@@ -27,14 +57,8 @@ public:
 
 	String get_text(const int column_number, const int row_number) const;
 
-	/*
-	 * 8 possible tracks at the moment which are each assigned to by an audio file in the FileList xml.
-	 * track_assignment_index_ is an array of length n where each element is the file path that corresponds to a given
-	 * file to be played and triggered in a SequencerTrack with SampleSources.
-	 * For example, in the FileList gui, setting track 1 to ".../kick.wav" should set the sample on SequencerTrack 1
-	 * to ".../kick.wav".
-	 */
-	std::array<String, 8> track_assignment_index_;
+	// std::array<String, 8> track_assignment_index_;
+    std::unique_ptr<TrackAssigner> track_assigner_;
     TableListBox table_{ {}, this };
 private:
 	const String create_xml_file(const String& folder_path);
@@ -69,7 +93,29 @@ private:
         {
             owner_.set_text(column_id_, row, getText());
 
-            owner_.track_assignment_index_.at(row) = getText();
+            /*
+             * There will be a better way of detecting this but currently column 5
+             * is the track assignment column for each sample file.
+             */
+            if (column_id_ == 5)
+            {
+                /*
+                 * Set the track the user types in i.e. track 1 or 3, etc.
+                 * to the file_path of the file at that row the user edits.
+                 * If the user edits the track assignment on row three which could
+                 * be the row with cello.wav, then cello.wav will get updated
+                 * to sequencer track 3 after the ChangeBroadcaster, TrackAssigner,
+                 * updates its listeners.
+                 */
+                // auto track_to_update = getText().getIntValue();
+                // auto file_path = owner_.get_text(2, row);
+                
+                // Logger::writeToLog(file_path + " " + getText());
+
+                // owner_.track_assigner_->set_track(track_to_update, file_path);
+                // HARDCODED for NOW
+                owner_.track_assigner_->set_track(0, "cello.wav");
+            }
         }
 
         void setRowAndColumn(const int newRow, const int newColumn)
@@ -106,7 +152,7 @@ private:
         {
             row_ = newRow;
             column_id_ = newColumn;
-            toggle_button_.setToggleState((bool)owner_.get_selection(row_), sendNotificationAsync);
+            toggle_button_.setToggleState((bool)owner_.get_selection(row_), dontSendNotification);
         }
 
     private:

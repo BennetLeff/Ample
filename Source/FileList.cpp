@@ -10,7 +10,7 @@
 
 #include "FileList.h"
 
-FileList::FileList(const String& folder_path)
+FileList::FileList(const String& folder_path, ChangeListener* file_path_update_listener)
 {
 	const String xml_file_string = create_xml_file(folder_path);
 	File xml_file(folder_path + "/TableData2.xml");
@@ -40,6 +40,8 @@ FileList::FileList(const String& folder_path)
 	table_.getHeader().setColumnVisible(8, false);
 
 	table_.setMultipleSelectionEnabled(true);
+
+	track_assigner_ = std::make_unique<TrackAssigner>(file_path_update_listener);
 }
 
 int FileList::getNumRows()
@@ -266,5 +268,6 @@ const String& FileList::get_attribute_name_for_column_id(const int columnId) con
 			return columnXml->getStringAttribute("name");
 	}
 
-	return {};
+	return {}
+	;
 }

@@ -4,9 +4,9 @@
 
 #include "FileListingScene.h"
 
-FileListingScene::FileListingScene(const String &file_path)
+FileListingScene::FileListingScene(const String &file_path, ChangeListener* file_path_change_listener)
 {
-    file_listing = std::make_unique<FileList>(file_path);
+    file_listing = std::make_unique<FileList>(file_path, file_path_change_listener);
     addAndMakeVisible(file_listing.get());
 }
 

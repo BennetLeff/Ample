@@ -20,6 +20,12 @@
             file="Source/MainComponent.cpp"/>
       <FILE id="XL4Xzc" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
     </GROUP>
+    <FILE id="IFOy47" name="FileListingScene.cpp" compile="1" resource="0"
+          file="Source/FileListingScene.cpp"/>
+    <FILE id="Euhaus" name="FileListingScene.h" compile="0" resource="0"
+          file="Source/FileListingScene.h"/>
+    <FILE id="R38Uhh" name="MainScene.cpp" compile="1" resource="0" file="Source/MainScene.cpp"/>
+    <FILE id="i7Onnd" name="MainScene.h" compile="0" resource="0" file="Source/MainScene.h"/>
   </MAINGROUP>
   <EXPORTFORMATS>
     <VS2017 targetFolder="Builds/VisualStudio2017">

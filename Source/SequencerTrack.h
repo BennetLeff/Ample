@@ -73,6 +73,7 @@ public:
 
 	void add_and_make_visible();
 	void attach_sample(ChangeListener& sample_source);
+
 	/*
 	 * position_triggers offsets a SequencerTrack's buttons.
 	 */
@@ -81,6 +82,5 @@ public:
 
 	std::array<std::unique_ptr<SequencerButton>, NUM_SEQUENCER_STEPS> sample_assigners_;
 private:
-
 	std::weak_ptr<Sequencer> sequencer_;
 };

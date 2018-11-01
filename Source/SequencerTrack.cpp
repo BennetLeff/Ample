@@ -11,10 +11,16 @@
 #include <algorithm>
 
 #include "SequencerTrack.h"
+#include "FileList.h"
 
 void SequencerButton::attach_sample_source(ChangeListener& sample_source)
 {
 	addChangeListener(&sample_source);
+}
+
+void SequencerButton::attach_sample_source(ChangeListener* sample_source)
+{
+	addChangeListener(sample_source);
 }
 
 void SequencerButton::toggle()
@@ -61,23 +67,29 @@ void SequencerTrack::attach_sample(ChangeListener& sample_source)
 		[&sample_source](auto& button) { button->attach_sample_source(sample_source); });
 }
 
+void SequencerTrack::attach_sample(ChangeListener* sample_source)
+{
+	std::for_each(sample_assigners_.begin(), sample_assigners_.end(),
+		[&sample_source](auto& button) { button->attach_sample_source(sample_source); });
+}
+
 void SequencerTrack::changeListenerCallback(ChangeBroadcaster* source)
 {
-	/*
-	 * There needs to be a way to ensure the only broadcaster source
-	 * is a sequencer. However, until that is written, we'll assume
-	 * the source is the global sequencer.
-	 * For reasons, the raw pointer within a weak_ptr can only be 
-	 * referenced if a shared_ptr is constructed by a weak_ptr... 
-	 * So for now, we lock and get the address to see if the 
-	 * sequencer is the source.
-	 */
-	auto sequencer_source = static_cast<Sequencer*>(source);
-	auto cur_step = sequencer_source->current_step();
+    if(auto sequencer_source = dynamic_cast<Sequencer*>(source); sequencer_source != nullptr)
+    {
+        auto cur_step = sequencer_source->current_step();
 
-	if (is_step_on(cur_step))
-		sample_assigners_.at(cur_step)->sendChangeMessage();
-	update_trigger_button_colours(cur_step);
+        if (is_step_on(cur_step))
+            sample_assigners_.at(cur_step)->sendChangeMessage();
+        update_trigger_button_colours(cur_step);
+    }
+    else if (auto track_assigner_source = dynamic_cast<TrackAssigner*>(source); track_assigner_source != nullptr)
+    {
+        /*
+         * Attach a new sample with a path which is contained in track_assigner_source
+         */
+
+    }
 }
 
 bool SequencerTrack::is_step_on(uint16_t step)
@@ -91,6 +103,7 @@ void SequencerTrack::position_triggers(uint16_t y_offset)
 	std::for_each(sample_assigners_.begin(), sample_assigners_.end(),
 		[i, y_offset](auto& button) mutable { button->setBounds(i, 200 + y_offset, 40, 40); i += 50; });
 }
+
 
 void SequencerTrack::update_trigger_button_colours(uint16_t step_to_update)
 {
