@@ -154,6 +154,8 @@
     <ClCompile Include="..\..\Source\SampleSource.cpp"/>
     <ClCompile Include="..\..\Source\MainComponent.cpp"/>
     <ClCompile Include="..\..\Source\Main.cpp"/>
+    <ClCompile Include="..\..\Source\FileListingScene.cpp"/>
+    <ClCompile Include="..\..\Source\MainScene.cpp"/>
     <ClCompile Include="C:\JUCE\modules\juce_audio_basics\buffers\juce_AudioChannelSet.cpp">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
@@ -1822,6 +1824,8 @@
     <ClInclude Include="..\..\Source\Sequencer.h"/>
     <ClInclude Include="..\..\Source\SampleSource.h"/>
     <ClInclude Include="..\..\Source\MainComponent.h"/>
+    <ClInclude Include="..\..\Source\FileListingScene.h"/>
+    <ClInclude Include="..\..\Source\MainScene.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_audio_basics\audio_play_head\juce_AudioPlayHead.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_audio_basics\buffers\juce_AudioChannelSet.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_audio_basics\buffers\juce_AudioDataConverters.h"/>

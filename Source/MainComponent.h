@@ -10,6 +10,7 @@
 
 #include "FileListingScene.h"
 #include "MainScene.h"
+#include "SampleSource.h"
 
 /*
     This component lives inside our window, and this is where you should put all
@@ -40,10 +41,17 @@ private:
 		Stopping
 	} state_;
 
+	/*
+	 * Each scene has access to a shared_ptr<Sequencer> so that they can modify some aspect of it.
+	 * The FileListingScene modifies which audio file each sequencer step points to i.e. kick1.wav.
+	 * The MainScene modifies which steps are triggered.
+	 */
 	std::unique_ptr<MainScene> main_scene;
 	std::unique_ptr<FileListingScene> file_listing_scene;
+	std::vector<SampleSource> sample_sources_;
+	std::shared_ptr<Sequencer> sequencer_;
 
-	const String xml_file_path_ = "~/Documents/Workspace/Ample/Resources";
+	const String xml_file_path_ = "/home/bennet/Documents/Workspace/Ample/Resources/";
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };

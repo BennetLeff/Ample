@@ -1,42 +1,13 @@
 #pragma once
 
 #include "JuceHeader.h"
-
-class TrackAssigner : public ChangeBroadcaster
-{
-    /*
-     * 8 possible tracks at the moment which are each assigned to by an audio file in the FileList xml.
-     * track_assignment_index_ is an array of length n where each element is the file path that corresponds to a given
-     * file to be played and triggered in a SequencerTrack with SampleSources.
-     * For example, in the FileList gui, setting track 1 to ".../kick.wav" should set the sample on SequencerTrack 1
-     * to ".../kick.wav".
-     */
-public:
-    TrackAssigner(ChangeListener* file_path_update_listener)
-    {
-        addChangeListener(file_path_update_listener);
-
-        track_assignment_index_.fill("");
-    }
-
-    void set_track(int position, const String& track_path) 
-    { 
-        // track_assignment_index_.at(position) = track_path;
-        track_assignment_index_.at(0) = "";
-
-        sendChangeMessage();
-    }
-
-    std::array<String, 8> track_assignment_index_;
-private:
-
-};
+#include "Sequencer.h"
 
 class FileList : public Component,
 				 public TableListBoxModel
 {
 public:
-	FileList(const String& folder_path, ChangeListener* file_path_update_listener);
+	FileList(const String& folder_path, std::shared_ptr<Sequencer> sequencer);
 
 	void paintRowBackground(Graphics& g, int rowNumber, 
 		int /*width*/, int /*height*/, bool rowIsSelected) override;
@@ -58,7 +29,7 @@ public:
 	String get_text(const int column_number, const int row_number) const;
 
 	// std::array<String, 8> track_assignment_index_;
-    std::unique_ptr<TrackAssigner> track_assigner_;
+    // std::unique_ptr<TrackAssigner> track_assigner_;
     TableListBox table_{ {}, this };
 private:
 	const String create_xml_file(const String& folder_path);
@@ -114,7 +85,7 @@ private:
 
                 // owner_.track_assigner_->set_track(track_to_update, file_path);
                 // HARDCODED for NOW
-                owner_.track_assigner_->set_track(0, "cello.wav");
+                // owner_.track_assigner_->set_track(0, "cello.wav");
             }
         }
 

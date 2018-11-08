@@ -14,6 +14,7 @@
 
 #include "JuceHeader.h"
 #include "Sequencer.h"
+#include "SequencerTrack.h"
 
 Sequencer::Sequencer(const size_t number_of_steps, const double tempo)
 	: tempo_(tempo), step_index_(0),
@@ -22,7 +23,20 @@ Sequencer::Sequencer(const size_t number_of_steps, const double tempo)
 {
 	steps_.resize(number_of_steps);
 
+	for (auto& track: sequencer_tracks_)
+	    track = std::make_unique<SequencerTrack>();
+
 	startThread();
+
+    const MessageManagerLock mm_lock_(this);
+
+    auto count = 0;
+    for (auto& track : sequencer_tracks_)
+    {
+        track->setBounds(0, count * 60, getParentWidth(), getParentHeight());
+        addAndMakeVisible(track.get());
+        count += 1;
+    }
 }
 
 Sequencer::~Sequencer()
@@ -56,6 +70,16 @@ void Sequencer::stop()
 	stopThread(500);
 }
 
+void Sequencer::resized()
+{
+	auto count = 0;
+	for (auto& track : sequencer_tracks_)
+	{
+		track->position_triggers(count * 60);
+		count += 1;
+	}
+}
+
 void Sequencer::run()
 {
 	while (!threadShouldExit())
@@ -71,6 +95,16 @@ void Sequencer::play()
 	 * Send message that sequencer step is updated. This should update Listeners including
 	 *  - Each associated SequencerTrack: to update the step colours
 	 */
-	sendChangeMessage();
+	// sendChangeMessage();
+	for (int i = 0; i < num_sequencer_tracks_; i++)
+    {
+	    sequencer_tracks_.at(i)->update(i);
+    }
+
 	step();
+}
+
+void Sequencer::changeListenerCallback(ChangeBroadcaster *source)
+{
+
 }

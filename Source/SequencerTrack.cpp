@@ -18,13 +18,9 @@ void SequencerButton::attach_sample_source(ChangeListener& sample_source)
 	addChangeListener(&sample_source);
 }
 
-void SequencerButton::attach_sample_source(ChangeListener* sample_source)
-{
-	addChangeListener(sample_source);
-}
-
 void SequencerButton::toggle()
 {
+    is_on_ = !is_on_; // Flip the logical value from true to false or false to true.
 	if (is_on_)
 		setColour(TextButton::buttonColourId, on_colour_);
 	else
@@ -37,10 +33,10 @@ void SequencerButton::trigger_sequencer_colour()
 	setColour(TextButton::buttonColourId, triggered_colour_);
 }
 
-SequencerTrack::SequencerTrack(const std::shared_ptr<Sequencer>& main_sequencer)
-	: sequencer_(main_sequencer)
+SequencerTrack::SequencerTrack()
 {
-	for (auto& button : sample_assigners_)
+    auto count = 0;
+	for (auto& button : sequencer_buttons_)
 	{
 		button = std::make_unique<SequencerButton>();
 	
@@ -48,28 +44,25 @@ SequencerTrack::SequencerTrack(const std::shared_ptr<Sequencer>& main_sequencer)
 		 *  When a button is clicked it should toggle its on/off state and change color.
 		 */
 		button->onClick = [&button] {
-			button->is_on_ = !button->is_on_;
 			button->toggle();
 		};
+
+		button->setBounds(count * 50, 200, 40, 40);
+		addAndMakeVisible(button.get());
+		count += 1;
 	}
 }
 
 void SequencerTrack::add_and_make_visible()
 {
-	auto parent = getParentComponent();
-	std::for_each(sample_assigners_.begin(), sample_assigners_.end(),
-		[parent](auto& button) { parent->addAndMakeVisible(button.get()); });
+	// auto parent = getParentComponent();
+	std::for_each(sequencer_buttons_.begin(), sequencer_buttons_.end(),
+		[this](auto& button) { addAndMakeVisible(button.get()); });
 }
 
 void SequencerTrack::attach_sample(ChangeListener& sample_source)
 {
-	std::for_each(sample_assigners_.begin(), sample_assigners_.end(),
-		[&sample_source](auto& button) { button->attach_sample_source(sample_source); });
-}
-
-void SequencerTrack::attach_sample(ChangeListener* sample_source)
-{
-	std::for_each(sample_assigners_.begin(), sample_assigners_.end(),
+	std::for_each(sequencer_buttons_.begin(), sequencer_buttons_.end(),
 		[&sample_source](auto& button) { button->attach_sample_source(sample_source); });
 }
 
@@ -80,27 +73,35 @@ void SequencerTrack::changeListenerCallback(ChangeBroadcaster* source)
         auto cur_step = sequencer_source->current_step();
 
         if (is_step_on(cur_step))
-            sample_assigners_.at(cur_step)->sendChangeMessage();
+            sequencer_buttons_.at(cur_step)->sendChangeMessage();
         update_trigger_button_colours(cur_step);
     }
-    else if (auto track_assigner_source = dynamic_cast<TrackAssigner*>(source); track_assigner_source != nullptr)
-    {
-        /*
-         * Attach a new sample with a path which is contained in track_assigner_source
-         */
+}
 
-    }
+void SequencerTrack::resized()
+{
+    setBounds(getBoundsInParent());
+}
+
+void SequencerTrack::update(int sequencer_button_index)
+{
+    /*
+     * Should update by passing a SequencerButton reference but I will fix soon.
+     */
+     // if (is_step_on(sequencer_button_index))
+     //    sequencer_buttons_.at(sequencer_button_index)->sendChangeMessage();
+     // update_trigger_button_colours(sequencer_button_index);
 }
 
 bool SequencerTrack::is_step_on(uint16_t step)
 {
-	return sample_assigners_.at(step)->is_on_;
+    return sequencer_buttons_.at(step)->is_on_;
 }
 
 void SequencerTrack::position_triggers(uint16_t y_offset)
 {
 	int i = 200;
-	std::for_each(sample_assigners_.begin(), sample_assigners_.end(),
+	std::for_each(sequencer_buttons_.begin(), sequencer_buttons_.end(),
 		[i, y_offset](auto& button) mutable { button->setBounds(i, 200 + y_offset, 40, 40); i += 50; });
 }
 
@@ -108,10 +109,10 @@ void SequencerTrack::position_triggers(uint16_t y_offset)
 void SequencerTrack::update_trigger_button_colours(uint16_t step_to_update)
 {
 	if (step_to_update != 0)
-		sample_assigners_.at(step_to_update - 1)->toggle();
+		sequencer_buttons_.at(step_to_update - 1)->toggle();
 	else
-		sample_assigners_.at(sample_assigners_.size() - 1)->toggle();
+		sequencer_buttons_.at(sequencer_buttons_.size() - 1)->toggle();
 
-	sample_assigners_.at(step_to_update)->trigger_sequencer_colour();
+	sequencer_buttons_.at(step_to_update)->trigger_sequencer_colour();
 }
 

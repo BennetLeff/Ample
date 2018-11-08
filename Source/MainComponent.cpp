@@ -10,15 +10,17 @@ MainComponent::MainComponent()
     // specify the number of input and output channels that we want to open
     setAudioChannels (0, 2);
 
-    main_scene = std::make_unique<MainScene>();
+    sequencer_ = std::make_shared<Sequencer>(16, 140.0);
+
+    main_scene = std::make_unique<MainScene>(sequencer_);
     addAndMakeVisible(main_scene.get());
     main_scene->setSize(MAIN_COMP_WIDTH, MAIN_COMP_HEIGHT);
 
-    auto& track_one = main_scene->sequencer_tracks_.at(0);
+    // auto& track_one = main_scene->sequencer_tracks_.at(0);
 
-    file_listing_scene = std::make_unique<FileListingScene>(xml_file_path_, track_one.get());
-    addChildComponent(file_listing_scene.get());
-    file_listing_scene->setSize(MAIN_COMP_WIDTH, MAIN_COMP_HEIGHT);
+//    file_listing_scene = std::make_unique<FileListingScene>(xml_file_path_, sequencer_);
+//    addChildComponent(file_listing_scene.get());
+//    file_listing_scene->setSize(MAIN_COMP_WIDTH, MAIN_COMP_HEIGHT);
 
     addKeyListener(this);
 
@@ -53,7 +55,6 @@ void MainComponent::paint (Graphics& g)
 
 void MainComponent::resized()
 {
-
 }
 
 bool MainComponent::keyPressed(const KeyPress& key, Component* originating_component)

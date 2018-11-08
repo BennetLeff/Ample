@@ -10,7 +10,7 @@
 
 #include "FileList.h"
 
-FileList::FileList(const String& folder_path, ChangeListener* file_path_update_listener)
+FileList::FileList(const String& folder_path, std::shared_ptr<Sequencer> sequencer)
 {
 	const String xml_file_string = create_xml_file(folder_path);
 	File xml_file(folder_path + "/TableData2.xml");
@@ -40,8 +40,6 @@ FileList::FileList(const String& folder_path, ChangeListener* file_path_update_l
 	table_.getHeader().setColumnVisible(8, false);
 
 	table_.setMultipleSelectionEnabled(true);
-
-	track_assigner_ = std::make_unique<TrackAssigner>(file_path_update_listener);
 }
 
 int FileList::getNumRows()

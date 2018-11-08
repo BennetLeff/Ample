@@ -44,6 +44,9 @@ public:
 	void toggle();
 	void trigger_sequencer_colour();
 
+//	void resized() override;
+//	void paint(Graphics& g) override;
+
 	bool is_on_;
 
 private:
@@ -62,12 +65,14 @@ class Sequencer;
  * Sequencer updates. The global Sequencer acts as a Broadcaster which sends messages to
  * its recipient SequencerTrack(s) and other Listeners.
  */
-class SequencerTrack : public ChangeListener, public Component
+class SequencerTrack : public ChangeListener,
+                       public Component
 {
 public:
-	SequencerTrack(const std::shared_ptr<Sequencer>& main_sequencer);
+	SequencerTrack();
 
 	void changeListenerCallback(ChangeBroadcaster* source) override;
+	void resized() override;
 
 	bool is_step_on(uint16_t step);
 
@@ -80,7 +85,8 @@ public:
 	void position_triggers(uint16_t y_offset = 0);
 	void update_trigger_button_colours(uint16_t step_to_update);
 
-	std::array<std::unique_ptr<SequencerButton>, NUM_SEQUENCER_STEPS> sample_assigners_;
-private:
-	std::weak_ptr<Sequencer> sequencer_;
+	void update(int sequencer_button_index);
+
+	std::array<std::unique_ptr<SequencerButton>, NUM_SEQUENCER_STEPS> sequencer_buttons_;
+
 };
