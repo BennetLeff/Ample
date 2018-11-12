@@ -18,7 +18,6 @@ public:
 
     void paint (Graphics& g) override;
     void resized() override;
-    void set_sample_sources(std::vector<SampleSource>& sample_sources);
 
 private:
     void play_button_clicked();

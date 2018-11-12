@@ -21,16 +21,14 @@ Sequencer::Sequencer(const size_t number_of_steps, const double tempo)
 	sleep_amount_(tempo_ > 0 ? 60.0 / tempo_ : 0),
 	Thread("Sequencer Thread")
 {
-	steps_.resize(number_of_steps);
-
     const MessageManagerLock mm_lock_(this);
 
     auto count = 0;
     for (auto& track : sequencer_tracks_)
     {
         track = std::make_unique<SequencerTrack>();
-        track->setBounds(0, count * 10, getParentWidth(), getParentHeight());
         addAndMakeVisible(track.get());
+        track->setBounds(0, count * 10, getParentWidth(), getParentHeight());
         count += 1;
     }
 
@@ -44,22 +42,12 @@ Sequencer::~Sequencer()
 
 uint32_t Sequencer::current_step()
 {
-    return step_index_ % NUM_SEQUENCER_STEPS;
-}
-
-void Sequencer::update_trigger(bool on_or_off, int step_number)
-{
-	steps_.at(step_number) = on_or_off;
-}
-
-void Sequencer::clear_trigger(int step_number)
-{
-	steps_.at(step_number) = false;
+    return step_index_;
 }
 
 void Sequencer::step()
 {
-	step_index_ = (step_index_ + 1) % steps_.size();
+	step_index_ = (step_index_ + 1) % NUM_SEQUENCER_STEPS;
 }
 
 void Sequencer::stop()
@@ -93,7 +81,6 @@ void Sequencer::play()
 	 * Send message that sequencer step is updated. This should update Listeners including
 	 *  - Each associated SequencerTrack: to update the step colours
 	 */
-	// sendChangeMessage();
 	for (auto& seq_track : sequencer_tracks_)
     {
 	    seq_track->update(current_step());

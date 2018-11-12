@@ -7,8 +7,8 @@
 MainScene::MainScene(std::shared_ptr<Sequencer> sequencer)
 	 : sequencer_(sequencer)
 {
-	setup_text_button(play_button_, [this] { /* does nothing */ }, "Play [Does nothing atm]", Colours::green, false);
-	setup_text_button(stop_button_, [this] { /* does nothing */ }, "Stop [Does nothing atm]", Colours::red, false);
+	setup_text_button(play_button_, [this] { Logger::writeToLog("Play button clicked"); }, "Play [Does nothing atm]", Colours::green, true);
+	setup_text_button(stop_button_, [this] { Logger::writeToLog("Stop button clicked");  }, "Stop [Does nothing atm]", Colours::red, true);
 
 	addAndMakeVisible(&play_button_);
 	addAndMakeVisible(&stop_button_);
@@ -35,7 +35,7 @@ void MainScene::resized()
     // update their positions.
 	play_button_.setBounds(10, 70, getWidth() - 20, 20);
 	stop_button_.setBounds(10, 100, getWidth() - 20, 20);
-    sequencer_->setBounds(getLocalBounds());
+    sequencer_->setBounds(10, 130, getWidth() - 20, 400);
 }
 
 void MainScene::setup_text_button(TextButton& button, std::function<void()> on_click, const String& text, const Colour& colour, const bool on_or_off)
@@ -44,14 +44,4 @@ void MainScene::setup_text_button(TextButton& button, std::function<void()> on_c
 	button.setButtonText(text);
 	button.setColour(TextButton::buttonColourId, colour);
 	button.setEnabled(on_or_off);
-}
-
-void MainScene::set_sample_sources(std::vector<SampleSource> &sample_sources)
-{
-//    for (auto i = 0; i < sequencer_tracks_.size(); i++)
-//    {
-//        auto& sample_source = sample_sources.at(i);
-//        sequencer_tracks_.at(i)->attach_sample(sample_source);
-//        mixer_source_.addInputSource(&sample_source, false);
-//    }
 }
