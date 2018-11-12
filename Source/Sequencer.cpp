@@ -23,20 +23,18 @@ Sequencer::Sequencer(const size_t number_of_steps, const double tempo)
 {
 	steps_.resize(number_of_steps);
 
-	for (auto& track: sequencer_tracks_)
-	    track = std::make_unique<SequencerTrack>();
-
-	startThread();
-
     const MessageManagerLock mm_lock_(this);
 
     auto count = 0;
     for (auto& track : sequencer_tracks_)
     {
-        track->setBounds(0, count * 60, getParentWidth(), getParentHeight());
+        track = std::make_unique<SequencerTrack>();
+        track->setBounds(0, count * 10, getParentWidth(), getParentHeight());
         addAndMakeVisible(track.get());
         count += 1;
     }
+
+	startThread();
 }
 
 Sequencer::~Sequencer()
@@ -44,10 +42,9 @@ Sequencer::~Sequencer()
 	stopThread(500);
 }
 
-void Sequencer::update_tempo(double new_tempo)
+uint32_t Sequencer::current_step()
 {
-	tempo_ = new_tempo;
-	sleep_amount_ = 60.0 / tempo_;
+    return step_index_ % NUM_SEQUENCER_STEPS;
 }
 
 void Sequencer::update_trigger(bool on_or_off, int step_number)
@@ -85,6 +82,7 @@ void Sequencer::run()
 	while (!threadShouldExit())
 	{
 		play();
+		step();
 		sleep(static_cast<int>(sleep_amount_ * 1000));
 	}
 }
@@ -96,15 +94,9 @@ void Sequencer::play()
 	 *  - Each associated SequencerTrack: to update the step colours
 	 */
 	// sendChangeMessage();
-	for (int i = 0; i < num_sequencer_tracks_; i++)
+	for (auto& seq_track : sequencer_tracks_)
     {
-	    sequencer_tracks_.at(i)->update(i);
+	    seq_track->update(current_step());
     }
-
-	step();
-}
-
-void Sequencer::changeListenerCallback(ChangeBroadcaster *source)
-{
 
 }

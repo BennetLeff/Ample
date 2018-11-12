@@ -18,9 +18,8 @@ void SequencerButton::attach_sample_source(ChangeListener& sample_source)
 	addChangeListener(&sample_source);
 }
 
-void SequencerButton::toggle()
+void SequencerButton::toggle_color()
 {
-    is_on_ = !is_on_; // Flip the logical value from true to false or false to true.
 	if (is_on_)
 		setColour(TextButton::buttonColourId, on_colour_);
 	else
@@ -44,20 +43,14 @@ SequencerTrack::SequencerTrack()
 		 *  When a button is clicked it should toggle its on/off state and change color.
 		 */
 		button->onClick = [&button] {
-			button->toggle();
+			button->is_on_ = !button->is_on_;
+			button->toggle_color();
 		};
 
-		button->setBounds(count * 50, 200, 40, 40);
+		button->setBounds(count * 50, 100, 40, 40);
 		addAndMakeVisible(button.get());
 		count += 1;
 	}
-}
-
-void SequencerTrack::add_and_make_visible()
-{
-	// auto parent = getParentComponent();
-	std::for_each(sequencer_buttons_.begin(), sequencer_buttons_.end(),
-		[this](auto& button) { addAndMakeVisible(button.get()); });
 }
 
 void SequencerTrack::attach_sample(ChangeListener& sample_source)
@@ -83,22 +76,19 @@ void SequencerTrack::resized()
     setBounds(getBoundsInParent());
 }
 
-void SequencerTrack::update(int sequencer_button_index)
+void SequencerTrack::update(int step)
 {
     /*
      * Should update by passing a SequencerButton reference but I will fix soon.
      */
-     // if (is_step_on(sequencer_button_index))
-     //    sequencer_buttons_.at(sequencer_button_index)->sendChangeMessage();
-     // update_trigger_button_colours(sequencer_button_index);
+	if (sequencer_buttons_.at(step)->is_on_)
+	{
+		// play the sound
+	}
+	update_trigger_button_colours(step);
 }
 
-bool SequencerTrack::is_step_on(uint16_t step)
-{
-    return sequencer_buttons_.at(step)->is_on_;
-}
-
-void SequencerTrack::position_triggers(uint16_t y_offset)
+void SequencerTrack::position_triggers(uint32_t y_offset)
 {
 	int i = 200;
 	std::for_each(sequencer_buttons_.begin(), sequencer_buttons_.end(),
@@ -106,12 +96,16 @@ void SequencerTrack::position_triggers(uint16_t y_offset)
 }
 
 
-void SequencerTrack::update_trigger_button_colours(uint16_t step_to_update)
+void SequencerTrack::update_trigger_button_colours(uint32_t step_to_update)
 {
+	/*
+	 * Need to lock since we are drawing out of the gui.
+	 */
+	MessageManagerLock mm_lock_;
 	if (step_to_update != 0)
-		sequencer_buttons_.at(step_to_update - 1)->toggle();
+		sequencer_buttons_.at(step_to_update - 1)->toggle_color();
 	else
-		sequencer_buttons_.at(sequencer_buttons_.size() - 1)->toggle();
+		sequencer_buttons_.at(sequencer_buttons_.size() - 1)->toggle_color();
 
 	sequencer_buttons_.at(step_to_update)->trigger_sequencer_colour();
 }

@@ -18,7 +18,6 @@ class SequencerButton;
 class SequencerTrack;
 
 class Sequencer : public ChangeBroadcaster,
-		          public ChangeListener,
 		          public Component,
 		          public Thread
 {
@@ -35,14 +34,12 @@ public:
 	void run() override;
 	void resized() override;
 	void stop();
-
-	void changeListenerCallback(ChangeBroadcaster* source) override;
 	
-	uint16_t current_step() { return step_index_; }
+	uint32_t current_step();
 
 	std::vector<bool> steps_{ false };
 
-	static const uint16_t num_sequencer_tracks_ = 2;
+	static const uint32_t num_sequencer_tracks_ = 3;
 	std::array< std::unique_ptr<SequencerTrack>, num_sequencer_tracks_> sequencer_tracks_;
 private:
 	void step();
@@ -50,5 +47,5 @@ private:
 
 	double tempo_; // aka BPM
 	double sleep_amount_;
-	uint16_t step_index_; // Which step are we on in the sequencer.
+	uint32_t step_index_; // Which step are we on in the sequencer.
 };

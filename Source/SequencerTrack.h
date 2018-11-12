@@ -41,7 +41,7 @@ public:
 			is_on_(false) { }
 
 	void attach_sample_source(ChangeListener& sample_source);
-	void toggle();
+	void toggle_color();
 	void trigger_sequencer_colour();
 
 //	void resized() override;
@@ -74,18 +74,17 @@ public:
 	void changeListenerCallback(ChangeBroadcaster* source) override;
 	void resized() override;
 
-	bool is_step_on(uint16_t step);
+	bool is_step_on(uint32_t step) { return sequencer_buttons_.at(step)->is_on_; }
 
-	void add_and_make_visible();
 	void attach_sample(ChangeListener& sample_source);
 
 	/*
 	 * position_triggers offsets a SequencerTrack's buttons.
 	 */
-	void position_triggers(uint16_t y_offset = 0);
-	void update_trigger_button_colours(uint16_t step_to_update);
+	void position_triggers(uint32_t y_offset = 0);
+	void update_trigger_button_colours(uint32_t step_to_update);
 
-	void update(int sequencer_button_index);
+	void update(int step);
 
 	std::array<std::unique_ptr<SequencerButton>, NUM_SEQUENCER_STEPS> sequencer_buttons_;
 
