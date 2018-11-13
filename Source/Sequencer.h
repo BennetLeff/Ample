@@ -17,8 +17,7 @@
 class SequencerButton;
 class SequencerTrack;
 
-class Sequencer : public Component,
-		          public Thread
+class Sequencer : public Thread
 {
 public:
 	/*
@@ -29,7 +28,6 @@ public:
 	~Sequencer();
 	void update_tempo(double new_tempo);
 	void run() override;
-	void resized() override;
 	void stop();
 
 	uint32_t current_step();

@@ -12,7 +12,6 @@ MainScene::MainScene(std::shared_ptr<Sequencer> sequencer)
 
 	addAndMakeVisible(&play_button_);
 	addAndMakeVisible(&stop_button_);
-	addAndMakeVisible(sequencer_.get());
 }
 
 void MainScene::play(const AudioSourceChannelInfo& bufferToFill)
@@ -35,7 +34,6 @@ void MainScene::resized()
     // update their positions.
 	play_button_.setBounds(10, 70, getWidth() - 20, 20);
 	stop_button_.setBounds(10, 100, getWidth() - 20, 20);
-    sequencer_->setBounds(10, 130, getWidth() - 20, 400);
 }
 
 void MainScene::setup_text_button(TextButton& button, std::function<void()> on_click, const String& text, const Colour& colour, const bool on_or_off)

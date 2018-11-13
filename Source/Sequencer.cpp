@@ -21,15 +21,9 @@ Sequencer::Sequencer(const size_t number_of_steps, const double tempo)
 	sleep_amount_(tempo_ > 0 ? 60.0 / tempo_ : 0),
 	Thread("Sequencer Thread")
 {
-    const MessageManagerLock mm_lock_(this);
-
-    auto count = 0;
     for (auto& track : sequencer_tracks_)
     {
         track = std::make_unique<SequencerTrack>();
-        addAndMakeVisible(track.get());
-        track->setBounds(0, count * 10, getParentWidth(), getParentHeight());
-        count += 1;
     }
 
 	startThread();
@@ -53,16 +47,6 @@ void Sequencer::step()
 void Sequencer::stop()
 {
 	stopThread(500);
-}
-
-void Sequencer::resized()
-{
-	auto count = 0;
-	for (auto& track : sequencer_tracks_)
-	{
-		track->position_triggers(count * 60);
-		count += 1;
-	}
 }
 
 void Sequencer::run()
