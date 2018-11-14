@@ -32,8 +32,7 @@ class SequencerTrack : public Component
 public:
 	SequencerTrack();
 
-	bool is_step_on(uint32_t step) { return sequencer_buttons_.at(step)->is_on_; }
-
+	bool is_step_on(uint32_t step);
 	void update(int step);
 
 	std::array<std::unique_ptr<SequencerButton>, NUM_SEQUENCER_STEPS> sequencer_buttons_;

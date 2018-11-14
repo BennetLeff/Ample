@@ -30,7 +30,7 @@ public:
 	void run() override;
 	void stop();
 
-	uint32_t current_step();
+	uint32_t current_step_index();
 
 	static const uint32_t num_sequencer_tracks_ = 2;
 	std::array< std::unique_ptr<SequencerTrack>, num_sequencer_tracks_> sequencer_tracks_;

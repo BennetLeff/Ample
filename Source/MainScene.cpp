@@ -5,18 +5,15 @@
 #include "MainScene.h"
 
 MainScene::MainScene(std::shared_ptr<Sequencer> sequencer)
-	 : sequencer_(sequencer)
+	 : sequencer_(sequencer), volume_slider_(Slider::Rotary, Slider::TextBoxBelow),
+	    tempo_slider_(Slider::Rotary, Slider::TextBoxBelow)
 {
-	setup_text_button(play_button_, [this] { Logger::writeToLog("Play button clicked"); }, "Play [Does nothing atm]", Colours::green, true);
-	setup_text_button(stop_button_, [this] { Logger::writeToLog("Stop button clicked");  }, "Stop [Does nothing atm]", Colours::red, true);
+    addAndMakeVisible(volume_slider_);
+    addAndMakeVisible(tempo_slider_);
 
-	addAndMakeVisible(&play_button_);
-	addAndMakeVisible(&stop_button_);
-}
-
-void MainScene::play(const AudioSourceChannelInfo& bufferToFill)
-{
-    mixer_source_.getNextAudioBlock(bufferToFill);
+    volume_slider_.setRange(Range<double>(-60.0, 6.0), 1.0);
+    tempo_slider_.setRange(Range<double>(20.0, 400.0), 1.0);
+    tempo_slider_.setSkewFactor(0.5);
 }
 
 void MainScene::paint (Graphics& g)
@@ -29,17 +26,14 @@ void MainScene::paint (Graphics& g)
 
 void MainScene::resized()
 {
-    // This is called when the MainContentComponent is resized.
-    // If you add any child components, this is where you should
-    // update their positions.
-	play_button_.setBounds(10, 70, getWidth() - 20, 20);
-	stop_button_.setBounds(10, 100, getWidth() - 20, 20);
-}
+    // volume_slider_.setBounds(200, 200, 200, 200);
+    // tempo_slider_.setBounds(0, 0, 200, 200);
 
-void MainScene::setup_text_button(TextButton& button, std::function<void()> on_click, const String& text, const Colour& colour, const bool on_or_off)
-{
-	button.onClick = on_click;
-	button.setButtonText(text);
-	button.setColour(TextButton::buttonColourId, colour);
-	button.setEnabled(on_or_off);
+    FlexBox fb;                                          // [1]
+    fb.flexWrap = FlexBox::Wrap::wrap;                   // [2]
+    fb.justifyContent = FlexBox::JustifyContent::center; // [3]
+    fb.alignContent = FlexBox::AlignContent::center;     // [4]
+    fb.items.add(FlexItem(tempo_slider_).withMinWidth(140.0f).withMinHeight(140.0f));
+    fb.items.add(FlexItem(volume_slider_).withMinWidth(140.0f).withMinHeight(140.0f));
+    fb.performLayout (getLocalBounds().toFloat());       // [6]
 }

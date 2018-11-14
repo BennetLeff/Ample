@@ -38,7 +38,6 @@ void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRat
 
 void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill)
 {
-    main_scene->play(bufferToFill);
 }
 
 void MainComponent::releaseResources()

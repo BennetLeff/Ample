@@ -29,12 +29,7 @@ Sequencer::Sequencer(const size_t number_of_steps, const double tempo)
 	startThread();
 }
 
-Sequencer::~Sequencer()
-{
-	stopThread(500);
-}
-
-uint32_t Sequencer::current_step()
+uint32_t Sequencer::current_step_index()
 {
     return step_index_;
 }
@@ -54,6 +49,7 @@ void Sequencer::run()
 	while (!threadShouldExit())
 	{
 		play();
+		Logger::writeToLog("Step " + String(current_step_index()) + " :: " + String());
 		step();
 		sleep(static_cast<int>(sleep_amount_ * 1000));
 	}
@@ -67,7 +63,11 @@ void Sequencer::play()
 	 */
 	for (auto& seq_track : sequencer_tracks_)
     {
-	    seq_track->update(current_step());
+	    seq_track->update(current_step_index());
     }
+}
 
+Sequencer::~Sequencer()
+{
+    stopThread(500);
 }
