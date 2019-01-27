@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="ygnE0y" name="Ample" projectType="guiapp" jucerVersion="5.3.2"
+<JUCERPROJECT id="ygnE0y" name="Ample" projectType="guiapp" jucerVersion="5.4.1"
               cppLanguageStandard="17">
   <MAINGROUP id="o8r0V8" name="Ample">
     <GROUP id="{C9D16EC9-1DA3-B295-8E67-8610DC845B91}" name="Source">

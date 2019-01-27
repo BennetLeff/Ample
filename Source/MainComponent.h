@@ -16,7 +16,7 @@
     This component lives inside our window, and this is where you should put all
     your controls and content.
 */
-class MainComponent : public AudioAppComponent, public KeyListener
+class MainComponent : public AudioAppComponent, public KeyListener, public ChangeBroadcaster
 {
 public:
     MainComponent();
@@ -51,7 +51,12 @@ private:
 	std::vector<SampleSource> sample_sources_;
 	std::shared_ptr<Sequencer> sequencer_;
 
-	const String xml_file_path_ = "/home/bennet/Documents/Workspace/Ample/Resources/";
+	MixerAudioSource mixer_source_;
+	SampleSource sample_ = SampleSource();
+	bool playing_sample_ = false;
+	int last_step = 0;
+
+	const String xml_file_path_ = "C:\\Users\\bennet\\Documents\\Ample\\Resources";
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };

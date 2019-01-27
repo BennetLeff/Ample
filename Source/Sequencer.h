@@ -27,6 +27,7 @@ public:
 	Sequencer(const size_t number_of_steps, const double tempo);
 	~Sequencer();
 	void update_tempo(double new_tempo);
+	double get_tempo() { return tempo_; }
 	void run() override;
 	void stop();
 
@@ -40,5 +41,5 @@ private:
 
 	double tempo_; // aka BPM
 	double sleep_amount_;
-	uint32_t step_index_; // Which step are we on in the sequencer.
+	uint32_t step_index_ = 0; // Which step are we on in the sequencer.
 };

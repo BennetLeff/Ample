@@ -8,11 +8,20 @@ MainScene::MainScene(std::shared_ptr<Sequencer> sequencer)
 	 : sequencer_(sequencer), volume_slider_(Slider::Rotary, Slider::TextBoxBelow),
 	    tempo_slider_(Slider::Rotary, Slider::TextBoxBelow)
 {
-    addAndMakeVisible(volume_slider_);
+	tempo_label_.setText("Tempo", dontSendNotification);
+	volume_label_.setText("Volume", dontSendNotification);
+
+	tempo_slider_.onValueChange = [this] { sequencer_->update_tempo(tempo_slider_.getValue());  };
+	volume_slider_.onValueChange = [] {}; 
+
+	addAndMakeVisible(volume_label_);
+	addAndMakeVisible(volume_slider_);
+    addAndMakeVisible(tempo_label_);
     addAndMakeVisible(tempo_slider_);
 
     volume_slider_.setRange(Range<double>(-60.0, 6.0), 1.0);
     tempo_slider_.setRange(Range<double>(20.0, 400.0), 1.0);
+	tempo_slider_.setValue(sequencer_->get_tempo());
     tempo_slider_.setSkewFactor(0.5);
 }
 
@@ -26,14 +35,20 @@ void MainScene::paint (Graphics& g)
 
 void MainScene::resized()
 {
-    // volume_slider_.setBounds(200, 200, 200, 200);
-    // tempo_slider_.setBounds(0, 0, 200, 200);
+	Grid grid;
+	using Track = Grid::TrackInfo;
+	grid.templateRows = { Track(50_px), Track(50_px) }; // Add one "track" per row
+	grid.templateColumns = { Track(140_px), Track(140_px) }; // Add one "track" per column
 
-    FlexBox fb;                                          // [1]
-    fb.flexWrap = FlexBox::Wrap::wrap;                   // [2]
-    fb.justifyContent = FlexBox::JustifyContent::center; // [3]
-    fb.alignContent = FlexBox::AlignContent::center;     // [4]
-    fb.items.add(FlexItem(tempo_slider_).withMinWidth(140.0f).withMinHeight(140.0f));
-    fb.items.add(FlexItem(volume_slider_).withMinWidth(140.0f).withMinHeight(140.0f));
-    fb.performLayout (getLocalBounds().toFloat());       // [6]
+	Array<GridItem> main_scene_grid_items_;
+	// Set up the first row
+	main_scene_grid_items_.add( GridItem(volume_label_).withWidth(50.0f).withHeight(50.0f) );
+	main_scene_grid_items_.add( GridItem(tempo_label_).withWidth(50.0f).withHeight(50.0f) );
+	// Set up the second row
+	main_scene_grid_items_.add(GridItem(volume_slider_).withWidth(140.0f).withHeight(140.0f));
+	main_scene_grid_items_.add( GridItem(tempo_slider_).withWidth(140.0f).withHeight(140.0f) );
+
+	grid.items = main_scene_grid_items_;
+
+	grid.performLayout(getLocalBounds());
 }

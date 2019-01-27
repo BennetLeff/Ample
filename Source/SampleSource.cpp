@@ -29,8 +29,7 @@ void SampleSource::changeListenerCallback(ChangeBroadcaster* source)
 	 * but there should be some checks to assure this. The logic inside here should
 	 * be more complex. 
 	 */
-	
-	is_playing_ = true;
+	// is_playing_ = true;
 }
 
 void SampleSource::getNextAudioBlock(const AudioSourceChannelInfo& buffer_to_fill)
@@ -88,6 +87,7 @@ void SampleSource::getNextAudioBlock(const AudioSourceChannelInfo& buffer_to_fil
 		 */
 		if (position_ == current_buffer_.buffer_->getNumSamples())
 		{
+			Logger::writeToLog("stopped playing sample .... ");
 			stop();
 			buffer_to_fill.clearActiveBufferRegion();
 			return;
@@ -115,7 +115,7 @@ void SampleSource::start()
 		 * be able to start playing audio.
 		 */
 		is_playing_ = true;
-		sendChangeMessage();
+		// sendChangeMessage();
 	}
 }
 
@@ -125,7 +125,6 @@ void SampleSource::stop()
 	{
 		is_playing_ = false;
 		position_ = 0;
-		sendChangeMessage();
 	}
 }
 

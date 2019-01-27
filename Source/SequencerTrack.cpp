@@ -15,24 +15,19 @@
 
 SequencerTrack::SequencerTrack()
 {
-	for (auto& button : sequencer_buttons_)
+	for (auto& button : sequencer_steps_)
 	{
-		button = std::make_unique<SequencerButton>();
+		button = std::make_unique<SequencerStep>();
 	}
 }
 
 bool SequencerTrack::is_step_on(uint32_t step)
 {
-    return sequencer_buttons_.at(step)->is_on_;
+    return sequencer_steps_.at(step)->is_on_;
 }
 
 void SequencerTrack::update(int step)
 {
-    /*
-     * Should update by passing a SequencerButton reference but I will fix soon.
-     */
-	if (sequencer_buttons_.at(step)->is_on_)
-	{
-		// play the sound
-	}
+
 }
+

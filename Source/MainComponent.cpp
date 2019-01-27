@@ -21,6 +21,7 @@ MainComponent::MainComponent()
     file_listing_scene->setSize(MAIN_COMP_WIDTH, MAIN_COMP_HEIGHT);
 
     addKeyListener(this);
+	addChangeListener(&sample_);
 
 	// Make sure you set the size of the component after
 	// you add any child components.
@@ -34,10 +35,27 @@ MainComponent::~MainComponent()
 
 void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRate)
 {
+	sample_.set_file_path("C:\\Users\\bennet\\samples\\New Wave Drums\\Snare\\NW_Snare 2.wav");
+	sample_.set_playing(false);
+
+	mixer_source_.addInputSource(&sample_, false);
+	mixer_source_.prepareToPlay(samplesPerBlockExpected, sampleRate);
 }
 
 void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill)
 {
+	if (last_step != sequencer_->current_step_index())
+	{
+		if (sequencer_->current_step_index() % 4 == 0)
+		{
+			sample_.start();
+		}
+	}
+
+	last_step = sequencer_->current_step_index();
+
+	mixer_source_.getNextAudioBlock(bufferToFill);
+
 }
 
 void MainComponent::releaseResources()

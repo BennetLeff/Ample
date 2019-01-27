@@ -18,7 +18,7 @@
 
 #define NUM_SEQUENCER_STEPS 8
 
-struct SequencerButton
+struct SequencerStep
 {
 	bool is_on_;
 };
@@ -35,5 +35,5 @@ public:
 	bool is_step_on(uint32_t step);
 	void update(int step);
 
-	std::array<std::unique_ptr<SequencerButton>, NUM_SEQUENCER_STEPS> sequencer_buttons_;
+	std::array<std::unique_ptr<SequencerStep>, NUM_SEQUENCER_STEPS> sequencer_steps_;
 };

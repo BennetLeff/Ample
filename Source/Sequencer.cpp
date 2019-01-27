@@ -55,6 +55,12 @@ void Sequencer::run()
 	}
 }
 
+void Sequencer::update_tempo(double tempo)
+{
+	tempo_ = tempo;
+	sleep_amount_ = tempo_ > 0 ? 60.0 / tempo_ : 0;
+}
+
 void Sequencer::play()
 {	
 	/*
