@@ -63,14 +63,29 @@ void Sequencer::update_tempo(double tempo)
 
 void Sequencer::play()
 {	
-	/*
-	 * Send message that sequencer step is updated. This should update Listeners including
-	 *  - Each associated SequencerTrack: to update the step colours
-	 */
+	// Loop over every SequencerTrack in the Sequencer
 	for (auto& seq_track : sequencer_tracks_)
-    {
-	    seq_track->update(current_step_index());
-    }
+	{
+		// If the track is actually initialized
+		if (seq_track->sequencer_steps_.at(0))
+		{
+			// Get the current step
+			auto& cur_step = seq_track->sequencer_steps_.at(current_step_index());
+
+			// If the step has changed since the last time play was called
+			// we can call start
+			if (last_step_ != current_step_index())
+			{
+				if (current_step_index() % 4 == 0)
+				{
+					cur_step->sample_source_->start();
+				}
+			}
+
+			last_step_ = this->current_step_index();
+		}
+
+	}
 }
 
 Sequencer::~Sequencer()

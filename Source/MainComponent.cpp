@@ -12,16 +12,26 @@ MainComponent::MainComponent()
 
     sequencer_ = std::make_shared<Sequencer>(NUM_SEQUENCER_STEPS, 140.0);
 
+	// Set up the main scene
     main_scene = std::make_unique<MainScene>(sequencer_);
     addAndMakeVisible(main_scene.get());
     main_scene->setSize(MAIN_COMP_WIDTH, MAIN_COMP_HEIGHT);
 
+	// Set up the "file listing" scene
     file_listing_scene = std::make_unique<FileListingScene>(xml_file_path_, sequencer_);
     addChildComponent(file_listing_scene.get());
     file_listing_scene->setSize(MAIN_COMP_WIDTH, MAIN_COMP_HEIGHT);
 
     addKeyListener(this);
 	addChangeListener(&sample_);
+	
+	auto snare_sample = std::make_shared<SampleSource>();
+	snare_sample->set_file_path("C:\\Users\\bennet\\samples\\New Wave Drums\\Snare\\NW_Snare 2.wav");
+	sample_sources_.push_back(snare_sample);
+	sample_sources_.at(0)->set_playing(false);
+	mixer_source_.addInputSource(sample_sources_.at(0).get(), false);
+
+	sequencer_->sequencer_tracks_.at(0)->bind_sample(snare_sample);
 
 	// Make sure you set the size of the component after
 	// you add any child components.
@@ -43,19 +53,8 @@ void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRat
 }
 
 void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill)
-{
-	if (last_step != sequencer_->current_step_index())
-	{
-		if (sequencer_->current_step_index() % 4 == 0)
-		{
-			sample_.start();
-		}
-	}
-
-	last_step = sequencer_->current_step_index();
-
+{	
 	mixer_source_.getNextAudioBlock(bufferToFill);
-
 }
 
 void MainComponent::releaseResources()

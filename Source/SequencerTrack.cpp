@@ -21,6 +21,14 @@ SequencerTrack::SequencerTrack()
 	}
 }
 
+void SequencerTrack::bind_sample(std::shared_ptr<SampleSource> sample)
+{
+	for (auto& step : sequencer_steps_)
+	{
+		step->sample_source_ = sample;
+	}
+}
+
 bool SequencerTrack::is_step_on(uint32_t step)
 {
     return sequencer_steps_.at(step)->is_on_;

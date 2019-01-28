@@ -262,6 +262,7 @@
 #ifndef    JUCE_USE_CAMERA
  //#define JUCE_USE_CAMERA 0
 #endif
+
 //==============================================================================
 #ifndef    JUCE_STANDALONE_APPLICATION
  #if defined(JucePlugin_Name) && defined(JucePlugin_Build_Standalone)

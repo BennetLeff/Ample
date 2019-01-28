@@ -18,9 +18,12 @@
 
 #define NUM_SEQUENCER_STEPS 8
 
+class SampleSource;
+
 struct SequencerStep
 {
 	bool is_on_;
+	std::shared_ptr<SampleSource> sample_source_;
 };
 
 /*
@@ -34,6 +37,8 @@ public:
 
 	bool is_step_on(uint32_t step);
 	void update(int step);
+
+	void bind_sample(std::shared_ptr<SampleSource> sample);
 
 	std::array<std::unique_ptr<SequencerStep>, NUM_SEQUENCER_STEPS> sequencer_steps_;
 };

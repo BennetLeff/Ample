@@ -42,4 +42,5 @@ private:
 	double tempo_; // aka BPM
 	double sleep_amount_;
 	uint32_t step_index_ = 0; // Which step are we on in the sequencer.
+	uint32_t last_step_ = 0;
 };
