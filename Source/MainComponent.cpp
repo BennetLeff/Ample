@@ -25,13 +25,11 @@ MainComponent::MainComponent()
     addKeyListener(this);
 	addChangeListener(&sample_);
 	
-	auto snare_sample = std::make_shared<SampleSource>();
-	snare_sample->set_file_path("C:\\Users\\bennet\\samples\\New Wave Drums\\Snare\\NW_Snare 2.wav");
-	sample_sources_.push_back(snare_sample);
-	sample_sources_.at(0)->set_playing(false);
-	mixer_source_.addInputSource(sample_sources_.at(0).get(), false);
-
-	sequencer_->sequencer_tracks_.at(0)->bind_sample(snare_sample);
+	for (auto& track : sequencer_->sequencer_tracks_)
+	{
+		track->sample_source_ = std::make_shared<SampleSource>();
+		mixer_source_.addInputSource(track->sample_source_.get(), false);
+	}
 
 	// Make sure you set the size of the component after
 	// you add any child components.
@@ -45,10 +43,6 @@ MainComponent::~MainComponent()
 
 void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRate)
 {
-	sample_.set_file_path("C:\\Users\\bennet\\samples\\New Wave Drums\\Snare\\NW_Snare 2.wav");
-	sample_.set_playing(false);
-
-	mixer_source_.addInputSource(&sample_, false);
 	mixer_source_.prepareToPlay(samplesPerBlockExpected, sampleRate);
 }
 

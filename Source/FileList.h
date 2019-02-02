@@ -82,19 +82,20 @@ private:
                  * updates its listeners.
                  */
                 auto track_to_update = getText().getIntValue();
-                auto file_path = owner_.get_text(2, row);
+                auto file_name = owner_.get_text(2, row);
                 
-				Logger::writeToLog("Sample " + file_path + " set to track " + getText());
+				Logger::writeToLog("Sample " + file_name + " set to track " + getText());
 
                 // owner is the FileList
 
 				// Instead of creating a new sample source, i  can point the existing sample source to a 
 				// new sample.
-				// owner_.sequencer_->bind_sample_to_track(0, owner_.cello_sample);
 				const String dir = "C:\\Users\\bennet\\Documents\\Workspace\\Ample\\Resources\\";
-				owner_.sequencer_->sequencer_tracks_.at(0)
+				const String new_sample_path = dir + file_name;
+
+				owner_.sequencer_->sequencer_tracks_.at(getText().getIntValue())
 								 ->sample_source_
-								 ->set_file_path(dir + file_path);
+								 ->set_file_path(new_sample_path);
             }
         }
 
