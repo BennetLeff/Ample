@@ -91,13 +91,10 @@ private:
 				// Instead of creating a new sample source, i  can point the existing sample source to a 
 				// new sample.
 				// owner_.sequencer_->bind_sample_to_track(0, owner_.cello_sample);
-				for (int i = 0; i < owner_.sequencer_->sequencer_tracks_.size(); i++)
-				{ 
-					owner_.sequencer_->sequencer_tracks_.at(0)
-							->sequencer_steps_.at(0)
-							->sample_source_
-							->set_file_path("C:\\Users\\bennet\\Documents\\Workspace\\Ample\\Resources\\cello.wav");
-				}
+				const String dir = "C:\\Users\\bennet\\Documents\\Workspace\\Ample\\Resources\\";
+				owner_.sequencer_->sequencer_tracks_.at(0)
+								 ->sample_source_
+								 ->set_file_path(dir + file_path);
             }
         }
 

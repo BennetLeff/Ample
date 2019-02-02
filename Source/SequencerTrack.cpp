@@ -25,10 +25,7 @@ void SequencerTrack::bind_sample(std::shared_ptr<SampleSource> sample)
 {
 	// Binding a sample must also tell the AudioSource / MixerAudioSource to update since the 
 	// sample is changed.
-	for (auto& step : sequencer_steps_)
-	{
-		step->sample_source_ = sample;
-	}
+	sample_source_ = sample;
 }
 
 bool SequencerTrack::is_step_on(uint32_t step)

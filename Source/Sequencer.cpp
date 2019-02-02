@@ -83,7 +83,7 @@ void Sequencer::play()
 			{
 				if (current_step_index() % 4 == 0)
 				{
-					cur_step->sample_source_->start();
+					seq_track->sample_source_->start();
 				}
 			}
 
