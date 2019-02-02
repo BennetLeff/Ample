@@ -40,6 +40,11 @@ FileList::FileList(const String& folder_path, std::shared_ptr<Sequencer> sequenc
 	table_.getHeader().setColumnVisible(8, false);
 
 	table_.setMultipleSelectionEnabled(true);
+
+	sequencer_ = sequencer;
+
+	// cello_sample = std::make_shared<SampleSource>();
+	// cello_sample->set_file_path("C:\\Users\\bennet\\Documents\\Workspace\\Ample\\Resources\\cello.wav");
 }
 
 int FileList::getNumRows()

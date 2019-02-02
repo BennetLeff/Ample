@@ -10,10 +10,13 @@
 
 #pragma once
 
+#include <memory>
 #include <vector>
 
+#include "SampleSource.h"
 #include "SequencerTrack.h"
 
+class SampleSource;
 class SequencerButton;
 class SequencerTrack;
 
@@ -30,6 +33,7 @@ public:
 	double get_tempo() { return tempo_; }
 	void run() override;
 	void stop();
+	void bind_sample_to_track(int track, std::shared_ptr<SampleSource> sample_to_bind);
 
 	uint32_t current_step_index();
 

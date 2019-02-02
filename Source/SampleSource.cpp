@@ -47,7 +47,6 @@ void SampleSource::getNextAudioBlock(const AudioSourceChannelInfo& buffer_to_fil
 		return;
 	}
 
-
 	int32_t position = current_buffer_.position_;
 
 	int32_t num_in_channels = current_buffer_.buffer_->getNumChannels();
@@ -87,7 +86,7 @@ void SampleSource::getNextAudioBlock(const AudioSourceChannelInfo& buffer_to_fil
 		 */
 		if (position_ == current_buffer_.buffer_->getNumSamples())
 		{
-			Logger::writeToLog("stopped playing sample .... ");
+			// Logger::writeToLog("stopped playing sample .... ");
 			stop();
 			buffer_to_fill.clearActiveBufferRegion();
 			return;
