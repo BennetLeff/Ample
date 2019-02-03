@@ -79,7 +79,7 @@ bool MainComponent::keyPressed(const KeyPress& key, Component* originating_compo
         file_listing_scene->setVisible(true);
     }
 	
-	// Set the current track to sequence2
+	// Set the current track to sequence
 	else if (key.getKeyCode() == '1')
 	{
 		cur_track = 0;
@@ -93,6 +93,31 @@ bool MainComponent::keyPressed(const KeyPress& key, Component* originating_compo
 	else if (key.getKeyCode() == '3')
 	{
 		cur_track = 2;
+	}
+	
+	else if (key.getKeyCode() == '4')
+	{
+		cur_track = 3;
+	}
+	
+	else if (key.getKeyCode() == '5')
+	{
+		cur_track = 4;
+	}
+	
+	else if (key.getKeyCode() == '6')
+	{
+		cur_track = 5;
+	}
+
+	else if (key.getKeyCode() == '7')
+	{
+		cur_track = 6;
+	}
+	
+	else if (key.getKeyCode() == '8')
+	{
+		cur_track = 7;
 	}
 	
 	// Now user qwertyui keys to turn on or off a step on cur track

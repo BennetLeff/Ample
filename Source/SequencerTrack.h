@@ -23,6 +23,7 @@ class SampleSource;
 struct SequencerStep
 {
 	bool is_on_;
+	double volume_ = 0.0; // Will be set from values -60.0/silent to 6.0;
 };
 
 /*

@@ -28,8 +28,6 @@ public:
 
 	String get_text(const int column_number, const int row_number) const;
 
-	// std::array<String, 8> track_assignment_index_;
-    // std::unique_ptr<TrackAssigner> track_assigner_;
     TableListBox table_{ {}, this };
 private:
 	const String create_xml_file(const String& folder_path);
@@ -45,7 +43,6 @@ private:
 	int num_rows_ = 0;
 
 	std::shared_ptr<Sequencer> sequencer_;
-	// std::shared_ptr<SampleSource> cello_sample;
 
     class EditableTextBox : public Label
     {

@@ -37,7 +37,7 @@ public:
 
 	uint32_t current_step_index();
 
-	static const uint32_t num_sequencer_tracks_ = 3;
+	static const uint32_t num_sequencer_tracks_ = 8;
 	std::array< std::unique_ptr<SequencerTrack>, num_sequencer_tracks_> sequencer_tracks_;
 private:
 	void step();
