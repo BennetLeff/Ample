@@ -59,5 +59,8 @@ private:
 
 	const String xml_file_path_ = "C:\\Users\\bennet\\Documents\\Ample\\Resources";
 
+	// KeyPress vars for controlling the sequencer steps
+	int cur_track = 0;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };

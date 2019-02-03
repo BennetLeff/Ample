@@ -75,14 +75,14 @@ void Sequencer::play()
 	// we can call start
 	if (last_step_ != current_step_index())
 	{
-		if (current_step_index() % 4 == 0)
+
+		for (auto& seq_track : sequencer_tracks_)
 		{
-			for (auto& seq_track : sequencer_tracks_)
-			{
-				// Get the current step
-				auto& cur_step = seq_track->sequencer_steps_.at(current_step_index());
+			// Get the current step
+			// This look up should be made more efficient
+			auto& cur_step = seq_track->sequencer_steps_.at(current_step_index());
+			if (cur_step->is_on_)
 				seq_track->sample_source_->start();
-			}
 		}
 	}
 

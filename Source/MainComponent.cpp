@@ -78,6 +78,53 @@ bool MainComponent::keyPressed(const KeyPress& key, Component* originating_compo
         main_scene->setVisible(false);
         file_listing_scene->setVisible(true);
     }
+	
+	// Set the current track to sequence2
+	else if (key.getKeyCode() == '1')
+	{
+		cur_track = 0;
+	}
+	
+	else if (key.getKeyCode() == '2')
+	{
+		cur_track = 1;
+	}
+	
+	else if (key.getKeyCode() == '3')
+	{
+		cur_track = 2;
+	}
+	
+	// Now user qwertyui keys to turn on or off a step on cur track
+	switch (key.getKeyCode())
+	{
+	case 81: // q
+		sequencer_->sequencer_tracks_.at(cur_track)->update(0); // flips on/off at 0
+		break;
+	case 87: // w
+		sequencer_->sequencer_tracks_.at(cur_track)->update(1); // flips on/off at 1
+		break;
+	case 69: // e
+		sequencer_->sequencer_tracks_.at(cur_track)->update(2); // flips on/off at 2
+		break;
+	case 82: // r
+		sequencer_->sequencer_tracks_.at(cur_track)->update(3); // flips on/off at 3
+		break;
+	case 84: // t
+		sequencer_->sequencer_tracks_.at(cur_track)->update(4); // flips on/off at 4
+		break;
+	case 89: // y
+		sequencer_->sequencer_tracks_.at(cur_track)->update(5); // flips on/off at 5
+		break;
+	case 85: // u
+		sequencer_->sequencer_tracks_.at(cur_track)->update(6); // flips on/off at 6
+		break;
+	case 73: // i
+		sequencer_->sequencer_tracks_.at(cur_track)->update(7); // flips on/off at 7
+		break;
+	default:
+		break;
+	}
 
     grabKeyboardFocus();
 

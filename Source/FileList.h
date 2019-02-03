@@ -93,7 +93,7 @@ private:
 				const String dir = "C:\\Users\\bennet\\Documents\\Workspace\\Ample\\Resources\\";
 				const String new_sample_path = dir + file_name;
 
-				owner_.sequencer_->sequencer_tracks_.at(getText().getIntValue())
+				owner_.sequencer_->sequencer_tracks_.at(getText().getIntValue() - 1)
 								 ->sample_source_
 								 ->set_file_path(new_sample_path);
             }

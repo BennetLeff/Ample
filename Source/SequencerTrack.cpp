@@ -35,6 +35,7 @@ bool SequencerTrack::is_step_on(uint32_t step)
 
 void SequencerTrack::update(int step)
 {
-
+	// flips a step
+	sequencer_steps_.at(step)->is_on_ = !sequencer_steps_.at(step)->is_on_;
 }
 
