@@ -15,19 +15,21 @@
 
 #include "SampleSource.h"
 #include "SequencerTrack.h"
+#include "ValueTreeObject.h"
 
 class SampleSource;
 class SequencerButton;
 class SequencerTrack;
 
-class Sequencer : public Thread
+class Sequencer : public Thread,
+				  public ValueTreeObject<IDs::Sequencer>
 {
 public:
 	/*
 	 * Initialize the sequencer with number of steps and tempo.
 	 * Set any of the steps at where the Sequencer is constructed.
 	*/
-	Sequencer(const size_t number_of_steps, const double tempo);
+	Sequencer(ValueTree& value_tree, UndoManager* undo_manager, const size_t number_of_steps, const double tempo);
 	~Sequencer();
 	void update_tempo(double new_tempo);
 	double get_tempo() { return tempo_; }
@@ -43,8 +45,11 @@ private:
 	void step();
 	void play();
 
-	double tempo_; // aka BPM
+	// double tempo_; // aka BPM
+	CachedValue<double> tempo_;
 	double sleep_amount_;
 	uint32_t step_index_ = 0; // Which step are we on in the sequencer.
 	uint32_t last_step_ = 0;
+
+	ValueTree state_;
 };

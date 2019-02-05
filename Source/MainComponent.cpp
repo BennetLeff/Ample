@@ -10,7 +10,9 @@ MainComponent::MainComponent()
     // specify the number of input and output channels that we want to open
     setAudioChannels (0, 2);
 
-    sequencer_ = std::make_shared<Sequencer>(NUM_SEQUENCER_STEPS, 140.0);
+	value_tree_ = create_default_value_tree();
+
+    sequencer_ = std::make_shared<Sequencer>(value_tree_, &undo_manager_, NUM_SEQUENCER_STEPS, 140.0);
 
 	// Set up the main scene
     main_scene = std::make_unique<MainScene>(sequencer_);
@@ -30,6 +32,8 @@ MainComponent::MainComponent()
 		track->sample_source_ = std::make_shared<SampleSource>();
 		mixer_source_.addInputSource(track->sample_source_.get(), false);
 	}
+
+	value_tree_.addListener(this);
 
 	// Make sure you set the size of the component after
 	// you add any child components.
@@ -160,4 +164,18 @@ bool MainComponent::keyStateChanged(bool is_key_down, Component* originating_com
 {
 
     return true;
+}
+
+ValueTree MainComponent::create_default_value_tree()
+{
+	ValueTree value_tree(IDs::Sequencer);
+	// The following line serves as an example, will be changed soon.
+	value_tree.setProperty(IDs::AmpleInfo::name, "Ample!", nullptr);
+
+	return value_tree;
+}
+
+void MainComponent::valueTreePropertyChanged(ValueTree & modified_tree, const Identifier & property)
+{
+	Logger::writeToLog(property.toString() + " property changed. ");
 }

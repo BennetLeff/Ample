@@ -16,7 +16,10 @@
     This component lives inside our window, and this is where you should put all
     your controls and content.
 */
-class MainComponent : public AudioAppComponent, public KeyListener, public ChangeBroadcaster
+class MainComponent : public AudioAppComponent, 
+					  public KeyListener,
+					  public ChangeBroadcaster,
+					  public ValueTree::Listener
 {
 public:
     MainComponent();
@@ -33,6 +36,12 @@ public:
     bool keyStateChanged(bool key_is_down, Component* originating_component) override;
 
 private:
+	void valueTreePropertyChanged(ValueTree&, const Identifier&) override;
+	void valueTreeChildAdded(ValueTree&, ValueTree&) override {}
+	void valueTreeChildRemoved(ValueTree&, ValueTree&, int) override {}
+	void valueTreeChildOrderChanged(ValueTree&, int, int) override {}
+	void valueTreeParentChanged(ValueTree&) override {}
+
 	enum class PlayState
 	{
 		Stopped,
@@ -40,6 +49,15 @@ private:
 		Playing,
 		Stopping
 	} state_;
+
+	ValueTree create_default_value_tree();
+
+	// The value tree root is held in the main component.
+	// ValueTree should be used to structure the JUCE application.
+	// value_tree_ could be loaded from serialized data.
+	// Since it's not at the moment, we must create a new one each time.
+	ValueTree value_tree_;
+	UndoManager undo_manager_;
 
 	/*
 	 * Each scene has access to a shared_ptr<Sequencer> so that they can modify some aspect of it.

@@ -10,7 +10,7 @@
 #include "Sequencer.h"
 #include "SequencerTrack.h"
 
-class MainScene : public Component, public ChangeBroadcaster
+class MainScene : public Component
 {
 public:
     MainScene(std::shared_ptr<Sequencer> sequencer);
@@ -23,10 +23,6 @@ private:
 	Label volume_label_;
     Slider volume_slider_;
     Slider tempo_slider_;
-
-	MixerAudioSource mixer_source_;
-
-	SampleSource sample_ = SampleSource();
 
     std::shared_ptr<Sequencer> sequencer_;
 };

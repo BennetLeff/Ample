@@ -13,7 +13,9 @@
 #include "SequencerTrack.h"
 #include "FileList.h"
 
-SequencerTrack::SequencerTrack()
+SequencerTrack::SequencerTrack(const ValueTree& value_tree, UndoManager* undo_manager)
+	: ValueTreeObject(value_tree, undo_manager),
+	  state_(value_tree)
 {
 	for (auto& button : sequencer_steps_)
 	{

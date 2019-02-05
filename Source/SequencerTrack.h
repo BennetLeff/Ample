@@ -15,6 +15,7 @@
 
 #include "SampleSource.h"
 #include "Sequencer.h"
+#include "ValueTreeObject.h"
 
 #define NUM_SEQUENCER_STEPS 8
 
@@ -31,10 +32,11 @@ struct SequencerStep
  * sequencer steps/button triggers. It contains a SampleSource so that any step
  * that the application can play the sample when a step is on.
  */
-class SequencerTrack : public Component
+class SequencerTrack : public Component,
+					   public ValueTreeObject<IDs::SequencerTrack>
 {
 public:
-	SequencerTrack();
+	SequencerTrack(const ValueTree& value_tree, UndoManager* undo_manager);
 
 	bool is_step_on(uint32_t step);
 	void update(int step);
@@ -45,4 +47,7 @@ public:
 	std::shared_ptr<SampleSource> sample_source_;
 
 	std::array<std::unique_ptr<SequencerStep>, NUM_SEQUENCER_STEPS> sequencer_steps_;
+
+private:
+	ValueTree state_;
 };

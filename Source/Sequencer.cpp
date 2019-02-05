@@ -16,14 +16,19 @@
 #include "Sequencer.h"
 #include "SequencerTrack.h"
 
-Sequencer::Sequencer(const size_t number_of_steps, const double tempo)
-	: tempo_(tempo), step_index_(0),
+Sequencer::Sequencer(ValueTree& value_tree, UndoManager* undo_manager, const size_t number_of_steps, const double tempo)
+	: ValueTreeObject(value_tree, undo_manager),
+	step_index_(0),
 	sleep_amount_(tempo_ > 0 ? 60.0 / tempo_ : 0),
+	tempo_(get_state(), IDs::SequencerProps::tempo, get_undo_manager(), tempo),
+	state_(value_tree),
 	Thread("Sequencer Thread")
 {
     for (auto& track : sequencer_tracks_)
     {
-        track = std::make_unique<SequencerTrack>();
+        track = std::make_unique<SequencerTrack>(
+								get_state().getOrCreateChildWithName(IDs::SequencerTrack, nullptr),
+								undo_manager);
     }
 
 	startThread();
@@ -82,7 +87,7 @@ void Sequencer::play()
 			// This look up should be made more efficient
 			auto& cur_step = seq_track->sequencer_steps_.at(current_step_index());
 			if (cur_step->is_on_)
-				seq_track->sample_source_->start();
+				seq_track->sample_source_->start();  //->start();
 		}
 	}
 
