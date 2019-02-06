@@ -48,7 +48,8 @@ private:
     {
     public:
         EditableTextBox(FileList& td)
-                : owner_(td)
+                : owner_(td),
+				  resources_dir_("C:\\Users\\bennet\\Documents\\Workspace\\Ample\\Resources\\")
         {
             setEditable(false, true, false);
         }
@@ -87,8 +88,7 @@ private:
 
 				// Instead of creating a new sample source, i  can point the existing sample source to a 
 				// new sample.
-				const String dir = "C:\\Users\\bennet\\Documents\\Workspace\\Ample\\Resources\\";
-				const String new_sample_path = dir + file_name;
+				const String new_sample_path = resources_dir_ + file_name;
 
 				owner_.sequencer_->sequencer_tracks_.at(getText().getIntValue() - 1)
 								 ->sample_source_
@@ -104,6 +104,7 @@ private:
         }
 
     private:
+		String resources_dir_;
         FileList& owner_;
         int row, column_id_;
         Colour text_colour_;

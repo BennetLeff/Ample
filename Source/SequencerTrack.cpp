@@ -32,7 +32,7 @@ void SequencerTrack::bind_sample(std::shared_ptr<SampleSource> sample)
 
 bool SequencerTrack::is_step_on(uint32_t step)
 {
-    return sequencer_steps_.at(step)->is_on_;
+    return sequencer_steps_.at(step)->is_on_; 
 }
 
 void SequencerTrack::update(int step)

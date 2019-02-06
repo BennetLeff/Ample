@@ -177,5 +177,5 @@ ValueTree MainComponent::create_default_value_tree()
 
 void MainComponent::valueTreePropertyChanged(ValueTree & modified_tree, const Identifier & property)
 {
-	Logger::writeToLog(property.toString() + " property changed. ");
+	Logger::writeToLog(property.toString() + " property changed to " + modified_tree.getProperty(property));
 }

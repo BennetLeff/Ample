@@ -14,12 +14,12 @@ namespace IDs
 	namespace SequencerProps
 	{
 		DEFINE_ID(tempo)
+		DEFINE_ID(step_index)
 	}
 
 	DEFINE_ID(SequencerTrack)
 	namespace SequencerTrackProps
 	{
-		// DEFINE_ID(sample_source)
 	}
 
 #undef DEFINE_ID

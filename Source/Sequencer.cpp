@@ -18,9 +18,9 @@
 
 Sequencer::Sequencer(ValueTree& value_tree, UndoManager* undo_manager, const size_t number_of_steps, const double tempo)
 	: ValueTreeObject(value_tree, undo_manager),
-	step_index_(0),
+	step_index_(get_state(), IDs::SequencerProps::step_index, get_undo_manager(), 0), // cached value initialization
 	sleep_amount_(tempo_ > 0 ? 60.0 / tempo_ : 0),
-	tempo_(get_state(), IDs::SequencerProps::tempo, get_undo_manager(), tempo),
+	tempo_(get_state(), IDs::SequencerProps::tempo, get_undo_manager(), tempo), // cached value initialization
 	state_(value_tree),
 	Thread("Sequencer Thread")
 {
@@ -59,7 +59,6 @@ void Sequencer::run()
 	while (!threadShouldExit())
 	{
 		play();
-		Logger::writeToLog("Step " + String(current_step_index()) + " :: " + String());
 		step();
 		sleep(static_cast<int>(sleep_amount_ * 1000));
 	}
@@ -73,9 +72,6 @@ void Sequencer::update_tempo(double tempo)
 
 void Sequencer::play()
 {	
-	// Loop over every SequencerTrack in the Sequencer
-
-
 	// If the step has changed since the last time play was called
 	// we can call start
 	if (last_step_ != current_step_index())
@@ -87,7 +83,7 @@ void Sequencer::play()
 			// This look up should be made more efficient
 			auto& cur_step = seq_track->sequencer_steps_.at(current_step_index());
 			if (cur_step->is_on_)
-				seq_track->sample_source_->start();  //->start();
+				seq_track->sample_source_->start();
 		}
 	}
 

@@ -47,7 +47,6 @@ public:
 	std::shared_ptr<SampleSource> sample_source_;
 
 	std::array<std::unique_ptr<SequencerStep>, NUM_SEQUENCER_STEPS> sequencer_steps_;
-
 private:
 	ValueTree state_;
 };

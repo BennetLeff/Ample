@@ -26,12 +26,12 @@ namespace IDs
 	namespace SequencerProps
 	{
 		DECLARE_ID(tempo)
+		DECLARE_ID(step_index)
 	}
 	
 	DECLARE_ID(SequencerTrack)
 	namespace SequencerTrackProps
 	{
-		// DECLARE_ID(sample_source)
 	}
 
 #undef DECLARE_ID
