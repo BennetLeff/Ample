@@ -18,20 +18,30 @@ MainComponent::MainComponent()
     main_scene = std::make_unique<MainScene>(sequencer_);
     addAndMakeVisible(main_scene.get());
     main_scene->setSize(MAIN_COMP_WIDTH, MAIN_COMP_HEIGHT);
-
+	
+	sample_editor_scene_ = std::make_unique<SampleEditorScene>();
+    addAndMakeVisible(sample_editor_scene_.get());
+    sample_editor_scene_->setSize(MAIN_COMP_WIDTH, MAIN_COMP_HEIGHT);
+	
 	// Set up the "file listing" scene
     file_listing_scene = std::make_unique<FileListingScene>(xml_file_path_, sequencer_);
     addChildComponent(file_listing_scene.get());
     file_listing_scene->setSize(MAIN_COMP_WIDTH, MAIN_COMP_HEIGHT);
 
     addKeyListener(this);
-	addChangeListener(&sample_);
 	
 	for (auto& track : sequencer_->sequencer_tracks_)
 	{
-		track->sample_source_ = std::make_shared<SampleSource>();
+		// We must call getOrCreateChildWithName or else the ValueTree node will still be a Sequencer Type
+		// creating a logic error inside SampleSource. Instead the ValueStree node will be a SampleSource Type.
+		track->sample_source_ = std::make_shared<SampleSource>(
+					value_tree_.getOrCreateChildWithName(IDs::SampleSource, &undo_manager_),
+					&undo_manager_);
+		// Add each of these SampleSources to the mixer so they can be played.
 		mixer_source_.addInputSource(track->sample_source_.get(), false);
 	}
+
+	// just hardcoded for now.
 
 	value_tree_.addListener(this);
 
@@ -73,14 +83,25 @@ bool MainComponent::keyPressed(const KeyPress& key, Component* originating_compo
 {
     if (key == key.leftKey)
     {
+		Logger::writeToLog("got left. ");
         main_scene->setVisible(true);
         file_listing_scene->setVisible(false);
+        sample_editor_scene_->setVisible(false);
     }
 
     else if (key == key.rightKey)
     {
+		Logger::writeToLog("got right. ");
         main_scene->setVisible(false);
+        sample_editor_scene_->setVisible(false);
         file_listing_scene->setVisible(true);
+    }
+	
+	else if (key == key.upKey)
+    {
+        main_scene->setVisible(false);
+        file_listing_scene->setVisible(false);
+        sample_editor_scene_->setVisible(true);
     }
 	
 	// Set the current track to sequence
@@ -178,4 +199,9 @@ ValueTree MainComponent::create_default_value_tree()
 void MainComponent::valueTreePropertyChanged(ValueTree & modified_tree, const Identifier & property)
 {
 	Logger::writeToLog(property.toString() + " property changed to " + modified_tree.getProperty(property));
+
+	if (property == IDs::SampleSourceProps::file_path)
+	{
+		sample_editor_scene_->set_sample(modified_tree[property]);
+	}
 }

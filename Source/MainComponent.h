@@ -10,6 +10,7 @@
 
 #include "FileListingScene.h"
 #include "MainScene.h"
+#include "SampleEditorScene.h"
 #include "SampleSource.h"
 
 /*
@@ -66,11 +67,10 @@ private:
 	 */
 	std::unique_ptr<MainScene> main_scene;
 	std::unique_ptr<FileListingScene> file_listing_scene;
-	std::vector<std::shared_ptr<SampleSource>> sample_sources_;
+	std::unique_ptr<SampleEditorScene> sample_editor_scene_;
 	std::shared_ptr<Sequencer> sequencer_;
 
 	MixerAudioSource mixer_source_;
-	SampleSource sample_ = SampleSource();
 
 	bool playing_sample_ = false;
 	int last_step = 0;

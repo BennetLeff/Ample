@@ -22,5 +22,13 @@ namespace IDs
 	{
 	}
 
+	DEFINE_ID(SampleSource)
+	namespace SampleSourceProps
+	{
+		DEFINE_ID(file_path);
+		DEFINE_ID(resources_directory)
+	}
+
+
 #undef DEFINE_ID
 }

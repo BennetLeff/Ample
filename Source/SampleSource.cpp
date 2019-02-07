@@ -9,8 +9,13 @@
 */
 #include "SampleSource.h"
 
-SampleSource::SampleSource()
-	: Thread("")
+SampleSource::SampleSource(ValueTree& value_tree, UndoManager* undo_manager)
+	: ValueTreeObject(value_tree, undo_manager),
+	  resources_directory_(get_state(), IDs::SampleSourceProps::resources_directory, get_undo_manager(),
+			"C:\\Users\\bennet\\Documents\\Workspace\\Ample\\Resources\\"), // cached value initialization
+	  file_path_(get_state(), IDs::SampleSourceProps::file_path, get_undo_manager(), ""), // cached value initialization
+	  state_(value_tree),
+	  Thread("")
 {
 	format_manager_.registerBasicFormats();
 	startThread();
@@ -124,13 +129,13 @@ void SampleSource::stop()
 	{
 		is_playing_ = false;
 		position_ = 0;
-	}
+	} 
 }
 
 void SampleSource::check_for_path_to_open()
 {
 	String path_to_open;
-	path_to_open.swapWith(chosen_path_);
+	path_to_open = file_path_;
 	if (path_to_open.isNotEmpty())
 	{
 		File file(path_to_open);

@@ -33,6 +33,13 @@ namespace IDs
 	namespace SequencerTrackProps
 	{
 	}
+	
+	DECLARE_ID(SampleSource)
+	namespace SampleSourceProps
+	{
+		DECLARE_ID(file_path);
+		DECLARE_ID(resources_directory)
+	}
 
 #undef DECLARE_ID
 }
