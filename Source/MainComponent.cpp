@@ -83,7 +83,6 @@ bool MainComponent::keyPressed(const KeyPress& key, Component* originating_compo
 {
     if (key == key.leftKey)
     {
-		Logger::writeToLog("got left. ");
         main_scene->setVisible(true);
         file_listing_scene->setVisible(false);
         sample_editor_scene_->setVisible(false);
@@ -91,7 +90,6 @@ bool MainComponent::keyPressed(const KeyPress& key, Component* originating_compo
 
     else if (key == key.rightKey)
     {
-		Logger::writeToLog("got right. ");
         main_scene->setVisible(false);
         sample_editor_scene_->setVisible(false);
         file_listing_scene->setVisible(true);
@@ -102,6 +100,8 @@ bool MainComponent::keyPressed(const KeyPress& key, Component* originating_compo
         main_scene->setVisible(false);
         file_listing_scene->setVisible(false);
         sample_editor_scene_->setVisible(true);
+		// Must request focus or the KeyListener will stop listening, only in SampleEditorScene (not sure why).
+		setWantsKeyboardFocus(true);
     }
 	
 	// Set the current track to sequence
@@ -198,10 +198,10 @@ ValueTree MainComponent::create_default_value_tree()
 
 void MainComponent::valueTreePropertyChanged(ValueTree & modified_tree, const Identifier & property)
 {
-	Logger::writeToLog(property.toString() + " property changed to " + modified_tree.getProperty(property));
-
 	if (property == IDs::SampleSourceProps::file_path)
 	{
+		Logger::writeToLog(property.toString() + " property changed to " + modified_tree.getProperty(property));
+
 		sample_editor_scene_->set_sample(modified_tree[property]);
 	}
 }

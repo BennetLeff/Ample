@@ -51,14 +51,14 @@ void SampleEditorScene::paint_if_no_file_loaded(Graphics& g, const Rectangle<int
 
 void SampleEditorScene::paint_if_file_loaded(Graphics& g, const Rectangle<int>& thumbnail_bounds)
 {
-	g.setColour(Colours::white);
+	g.setColour(Colours::darkslategrey);
 	g.fillRect(thumbnail_bounds);
-	g.setColour(Colours::red);                                     // [8]
-	thumbnail_.drawChannels(g,                                      // [9]
+	g.setColour(Colours::lightgoldenrodyellow);                                    
+	thumbnail_.drawChannels(g,                                     
 		thumbnail_bounds,
-		0.0,                                    // start time
-		thumbnail_.getTotalLength(),             // end time
-		1.0f);                                  // vertical zoom
+		0.0,                          // start time
+		thumbnail_.getTotalLength(),  // end time
+		1.0f);                        // vertical zoom
 }
 
 void SampleEditorScene::changeListenerCallback(ChangeBroadcaster* source)
