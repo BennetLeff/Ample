@@ -13,7 +13,8 @@ SampleSource::SampleSource(ValueTree& value_tree, UndoManager* undo_manager)
 	: ValueTreeObject(value_tree, undo_manager),
 	  resources_directory_(get_state(), IDs::SampleSourceProps::resources_directory, get_undo_manager(),
 			"C:\\Users\\bennet\\Documents\\Workspace\\Ample\\Resources\\"), // cached value initialization
-	  file_path_(get_state(), IDs::SampleSourceProps::file_path, get_undo_manager(), ""), // cached value initialization
+	  // file_path_(get_state(), IDs::SampleSourceProps::file_path, get_undo_manager(), ""), // cached value initialization
+	  file_path_(""),
 	  state_(value_tree),
 	  Thread("")
 {
@@ -175,6 +176,11 @@ void SampleSource::set_size(int num_channels, int num_samples)
 void SampleSource::set_position(uint32_t pos)
 {
 	position_ = pos;
+}
+
+void SampleSource::set_file_path(const String& path_to_swap)
+{
+	file_path_ = path_to_swap;
 }
 
 void SampleSource::prepareToPlay(int samples_per_block_expected, double sample_rate)

@@ -40,7 +40,7 @@ public:
 	void start();
 	void stop();
 
-	void set_file_path(const String path_to_swap) { file_path_ = path_to_swap; }
+	void set_file_path(const String& path_to_swap);
 	void set_size(int num_channels, int num_samples);
 	void set_position(uint32_t pos);
 	void set_playing(bool playing) { is_playing_ = playing;  }
@@ -49,7 +49,8 @@ public:
 
 	// The directory where files are located. Hardcoded for now.
 	CachedValue<String> resources_directory_; 
-	CachedValue<String> file_path_;
+	// CachedValue<String> file_path_;
+	String file_path_;
 private:
 	void run() override;
 	void check_for_path_to_open();

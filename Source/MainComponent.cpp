@@ -103,73 +103,71 @@ bool MainComponent::keyPressed(const KeyPress& key, Component* originating_compo
 		// Must request focus or the KeyListener will stop listening, only in SampleEditorScene (not sure why).
 		setWantsKeyboardFocus(true);
     }
-	
-	// Set the current track to sequence
-	else if (key.getKeyCode() == '1')
+
+	switch (key.getTextCharacter())
 	{
+	case '1':
 		cur_track = 0;
-	}
-	
-	else if (key.getKeyCode() == '2')
-	{
+		break;
+	case '2':
 		cur_track = 1;
-	}
-	
-	else if (key.getKeyCode() == '3')
-	{
+		break;
+	case '3':
 		cur_track = 2;
-	}
-	
-	else if (key.getKeyCode() == '4')
-	{
+		break;
+	case '4':
 		cur_track = 3;
-	}
-	
-	else if (key.getKeyCode() == '5')
-	{
+		break;
+	case '5':
 		cur_track = 4;
-	}
-	
-	else if (key.getKeyCode() == '6')
-	{
+		break;
+	case '6':
 		cur_track = 5;
+		break;
+	case '7':
+		cur_track = 6;
+		break;
+	case '8':
+		cur_track = 7;
+		break;
+	default:
+		break;
 	}
 
-	else if (key.getKeyCode() == '7')
-	{
-		cur_track = 6;
-	}
-	
-	else if (key.getKeyCode() == '8')
-	{
-		cur_track = 7;
-	}
-	
+	// Set the current track to sequence
 	// Now user qwertyui keys to turn on or off a step on cur track
 	switch (key.getKeyCode())
 	{
 	case 81: // q
+		Logger::writeToLog("Track Number currently is: " + String(cur_track));
 		sequencer_->sequencer_tracks_.at(cur_track)->update(0); // flips on/off at 0
 		break;
 	case 87: // w
+		Logger::writeToLog("Track Number currently is: " + String(cur_track));
 		sequencer_->sequencer_tracks_.at(cur_track)->update(1); // flips on/off at 1
 		break;
 	case 69: // e
+		Logger::writeToLog("Track Number currently is: " + String(cur_track));
 		sequencer_->sequencer_tracks_.at(cur_track)->update(2); // flips on/off at 2
 		break;
 	case 82: // r
+		Logger::writeToLog("Track Number currently is: " + String(cur_track));
 		sequencer_->sequencer_tracks_.at(cur_track)->update(3); // flips on/off at 3
 		break;
 	case 84: // t
+		Logger::writeToLog("Track Number currently is: " + String(cur_track));
 		sequencer_->sequencer_tracks_.at(cur_track)->update(4); // flips on/off at 4
 		break;
 	case 89: // y
+		Logger::writeToLog("Track Number currently is: " + String(cur_track));
 		sequencer_->sequencer_tracks_.at(cur_track)->update(5); // flips on/off at 5
 		break;
 	case 85: // u
+		Logger::writeToLog("Track Number currently is: " + String(cur_track));
 		sequencer_->sequencer_tracks_.at(cur_track)->update(6); // flips on/off at 6
 		break;
 	case 73: // i
+		Logger::writeToLog("Track Number currently is: " + String(cur_track));
 		sequencer_->sequencer_tracks_.at(cur_track)->update(7); // flips on/off at 7
 		break;
 	default:

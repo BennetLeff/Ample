@@ -88,7 +88,6 @@ void Sequencer::play()
 	}
 
 	last_step_ = this->current_step_index();
-
 }
 
 Sequencer::~Sequencer()
