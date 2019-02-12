@@ -139,35 +139,27 @@ bool MainComponent::keyPressed(const KeyPress& key, Component* originating_compo
 	switch (key.getKeyCode())
 	{
 	case 81: // q
-		Logger::writeToLog("Track Number currently is: " + String(cur_track));
 		sequencer_->sequencer_tracks_.at(cur_track)->update(0); // flips on/off at 0
 		break;
 	case 87: // w
-		Logger::writeToLog("Track Number currently is: " + String(cur_track));
 		sequencer_->sequencer_tracks_.at(cur_track)->update(1); // flips on/off at 1
 		break;
 	case 69: // e
-		Logger::writeToLog("Track Number currently is: " + String(cur_track));
 		sequencer_->sequencer_tracks_.at(cur_track)->update(2); // flips on/off at 2
 		break;
 	case 82: // r
-		Logger::writeToLog("Track Number currently is: " + String(cur_track));
 		sequencer_->sequencer_tracks_.at(cur_track)->update(3); // flips on/off at 3
 		break;
 	case 84: // t
-		Logger::writeToLog("Track Number currently is: " + String(cur_track));
 		sequencer_->sequencer_tracks_.at(cur_track)->update(4); // flips on/off at 4
 		break;
 	case 89: // y
-		Logger::writeToLog("Track Number currently is: " + String(cur_track));
 		sequencer_->sequencer_tracks_.at(cur_track)->update(5); // flips on/off at 5
 		break;
 	case 85: // u
-		Logger::writeToLog("Track Number currently is: " + String(cur_track));
 		sequencer_->sequencer_tracks_.at(cur_track)->update(6); // flips on/off at 6
 		break;
 	case 73: // i
-		Logger::writeToLog("Track Number currently is: " + String(cur_track));
 		sequencer_->sequencer_tracks_.at(cur_track)->update(7); // flips on/off at 7
 		break;
 	default:
@@ -196,10 +188,6 @@ ValueTree MainComponent::create_default_value_tree()
 
 void MainComponent::valueTreePropertyChanged(ValueTree & modified_tree, const Identifier & property)
 {
-	if (property == IDs::SampleSourceProps::file_path)
-	{
-		Logger::writeToLog(property.toString() + " property changed to " + modified_tree.getProperty(property));
+	Logger::writeToLog(property.toString() + " property changed to " + modified_tree.getProperty(property));
 
-		sample_editor_scene_->set_sample(modified_tree[property]);
-	}
 }

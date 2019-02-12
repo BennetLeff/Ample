@@ -29,7 +29,7 @@ class SampleSource : public AudioTransportSource,
 					 public Thread 
 {
 public:
-	SampleSource(ValueTree& value_tree, UndoManager* undo_manager);
+	SampleSource(const ValueTree& value_tree, UndoManager* undo_manager);
 	~SampleSource();
 	void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override;
 	void getNextAudioBlock(const AudioSourceChannelInfo& bufferToFill) override;
@@ -50,7 +50,7 @@ public:
 	// The directory where files are located. Hardcoded for now.
 	CachedValue<String> resources_directory_; 
 	// CachedValue<String> file_path_;
-	String file_path_;
+	ValueTree state_;
 private:
 	void run() override;
 	void check_for_path_to_open();
@@ -62,5 +62,5 @@ private:
 
 	AudioFormatManager format_manager_;
 
-	ValueTree state_;
+	String file_path_;
 };

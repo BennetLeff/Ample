@@ -75,7 +75,7 @@ private:
 	bool playing_sample_ = false;
 	int last_step = 0;
 
-	const String xml_file_path_ = "C:\\Users\\bennet\\Documents\\Ample\\Resources";
+	const String xml_file_path_ = "C:\\Users\\bennet\\Documents\\Workspace\\Ample\\Resources";
 
 	// KeyPress vars for controlling the sequencer steps
 	int cur_track = 0;

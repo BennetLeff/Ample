@@ -9,7 +9,7 @@
 */
 #include "SampleSource.h"
 
-SampleSource::SampleSource(ValueTree& value_tree, UndoManager* undo_manager)
+SampleSource::SampleSource(const ValueTree& value_tree, UndoManager* undo_manager)
 	: ValueTreeObject(value_tree, undo_manager),
 	  resources_directory_(get_state(), IDs::SampleSourceProps::resources_directory, get_undo_manager(),
 			"C:\\Users\\bennet\\Documents\\Workspace\\Ample\\Resources\\"), // cached value initialization

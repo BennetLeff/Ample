@@ -35,7 +35,7 @@ public:
 	double get_tempo() { return tempo_; }
 	void run() override;
 	void stop();
-	void bind_sample_to_track(int track, std::shared_ptr<SampleSource> sample_to_bind);
+	void bind_sample_to_track(int track, const String& file_path);
 
 	uint32_t current_step_index();
 

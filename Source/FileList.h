@@ -90,9 +90,10 @@ private:
 				// new sample.
 				const String new_sample_path = resources_dir_ + file_name;
 
-				owner_.sequencer_->sequencer_tracks_.at(getText().getIntValue() - 1)
+				/*owner_.sequencer_->sequencer_tracks_.at(getText().getIntValue() - 1)
 								 ->sample_source_
-								 ->set_file_path(new_sample_path);
+								 ->set_file_path(new_sample_path);*/
+				owner_.sequencer_->bind_sample_to_track(getText().getIntValue() - 1, new_sample_path);
             }
         }
 

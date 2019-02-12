@@ -49,9 +49,9 @@ void Sequencer::stop()
 	stopThread(500);
 }
 
-void Sequencer::bind_sample_to_track(int track, std::shared_ptr<SampleSource> sample_to_bind)
+void Sequencer::bind_sample_to_track(int track, const String& sample_file_path)
 {
-	sequencer_tracks_.at(track)->bind_sample(sample_to_bind);
+	sequencer_tracks_.at(track)->bind_sample(sample_file_path);
 }
 
 void Sequencer::run()

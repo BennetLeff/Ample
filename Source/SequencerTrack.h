@@ -16,10 +16,36 @@
 #include "SampleSource.h"
 #include "Sequencer.h"
 #include "ValueTreeObject.h"
+#include "ValueTreeObjectList.h"
 
 #define NUM_SEQUENCER_STEPS 8
 
 class SampleSource;
+
+class SampleSourceList : public ValueTreeObjectList<SampleSource>
+{
+public:
+	SampleSourceList(ValueTree state)
+		: ValueTreeObjectList<SampleSource>(state)
+	{
+		rebuild_objects();
+	}
+
+	~SampleSourceList()
+	{
+		freeObjects();
+	}
+
+	bool is_suitable_type(const ValueTree& v) const override;
+
+	SampleSource* create_new_object(const ValueTree& v) override;
+
+	void delete_object(SampleSource* ss) override;
+
+	void new_object_added(SampleSource*) override;
+	void object_removed(SampleSource*) override;
+	void object_order_changed() override;
+};
 
 struct SequencerStep
 {
@@ -41,7 +67,7 @@ public:
 	bool is_step_on(uint32_t step);
 	void update(int step);
 
-	void bind_sample(std::shared_ptr<SampleSource> sample);
+	void bind_sample(const String& file_path);
 
 	// The sample each step will trigger.
 	std::shared_ptr<SampleSource> sample_source_;
