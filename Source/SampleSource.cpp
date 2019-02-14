@@ -11,16 +11,16 @@
 
 SampleSource::SampleSource(const ValueTree& value_tree, UndoManager* undo_manager)
 	: ValueTreeObject(value_tree, undo_manager),
-	  state_(value_tree),
-	  resources_directory_(get_state(), IDs::SampleSourceProps::resources_directory, get_undo_manager(),
-			"C:\\Users\\bennet\\Documents\\Workspace\\Ample\\Resources\\"),
-	  //file_path_(get_state(), IDs::SampleSourceProps::file_path, get_undo_manager(), ""), // cached value initialization
-	  file_path_(""),
-	  Thread("")
+	is_playing_(false),
+	position_(0),
+	file_path_(""),
+	resources_directory_(get_state(), IDs::SampleSourceProps::resources_directory, get_undo_manager(),
+	"C:\\Users\\bennet\\Documents\\Workspace\\Ample\\Resources\\"),
+	state_(value_tree),
+	Thread("")
 {
 	jassert(value_tree.hasType(IDs::SampleSource));
 	resources_directory_.referTo(state_, IDs::SampleSourceProps::resources_directory, get_undo_manager());
-	// file_path_.referTo(state_, IDs::SampleSourceProps::file_path, get_undo_manager());
 
 	state_.setProperty(IDs::SampleSourceProps::file_path, file_path_, get_undo_manager());
 
@@ -32,10 +32,6 @@ SampleSource::~SampleSource()
 {
 	releaseResources();
 	stopThread(500);
-}
-
-void SampleSource::changeListenerCallback(ChangeBroadcaster* source)
-{
 }
 
 void SampleSource::getNextAudioBlock(const AudioSourceChannelInfo& buffer_to_fill)

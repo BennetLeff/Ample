@@ -30,18 +30,9 @@ MainComponent::MainComponent()
 
     addKeyListener(this);
 	
+	// Add each of these SampleSources to the mixer so they can be played.
 	for (auto& track : sequencer_->sequencer_tracks_)
-	{
-		// We must call getOrCreateChildWithName or else the ValueTree node will still be a Sequencer Type
-		// creating a logic error inside SampleSource. Instead the ValueStree node will be a SampleSource Type.
-		track->sample_source_ = std::make_shared<SampleSource>(
-					value_tree_.getOrCreateChildWithName(IDs::SampleSource, &undo_manager_),
-					&undo_manager_);
-		// Add each of these SampleSources to the mixer so they can be played.
 		mixer_source_.addInputSource(track->sample_source_.get(), false);
-	}
-
-	// just hardcoded for now.
 
 	value_tree_.addListener(this);
 

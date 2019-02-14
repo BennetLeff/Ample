@@ -24,7 +24,7 @@ class SampleSource;
 
 struct SequencerStep
 {
-	bool is_on_;
+	bool is_on_ = false;
 	double volume_ = 0.0; // Will be set from values -60.0/silent to 6.0;
 };
 
@@ -45,7 +45,7 @@ public:
 	void bind_sample(const String& file_path);
 
 	// The sample each step will trigger.
-	std::shared_ptr<SampleSource> sample_source_;
+	std::unique_ptr<SampleSource> sample_source_;
 
 	std::array<std::unique_ptr<SequencerStep>, NUM_SEQUENCER_STEPS> sequencer_steps_;
 private:

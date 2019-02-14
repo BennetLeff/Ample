@@ -17,12 +17,10 @@ SequencerTrack::SequencerTrack(const ValueTree& value_tree, UndoManager* undo_ma
 	: ValueTreeObject(value_tree, undo_manager),
 	  state_(value_tree)
 {
-	// sample_source_ = std::make_shared<SampleSource>(value_tree, undo_manager);
-
+	sample_source_ = std::make_unique<SampleSource>(state_.getOrCreateChildWithName(IDs::SampleSource, undo_manager),
+													undo_manager);
 	for (auto& button : sequencer_steps_)
-	{
 		button = std::make_unique<SequencerStep>();
-	}
 }
 
 void SequencerTrack::bind_sample(const String& file_path)

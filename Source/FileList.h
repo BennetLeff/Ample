@@ -63,6 +63,7 @@ private:
 
         void textWasEdited() override
         {
+			// owner is the FileList
             owner_.set_text(column_id_, row, getText());
 
             /*
@@ -84,15 +85,9 @@ private:
                 
 				Logger::writeToLog("Sample " + file_name + " set to track " + getText());
 
-                // owner is the FileList
-
-				// Instead of creating a new sample source, i  can point the existing sample source to a 
+				// Instead of creating a new sample source, I can point the existing sample source to a 
 				// new sample.
 				const String new_sample_path = resources_dir_ + file_name;
-
-				/*owner_.sequencer_->sequencer_tracks_.at(getText().getIntValue() - 1)
-								 ->sample_source_
-								 ->set_file_path(new_sample_path);*/
 				owner_.sequencer_->bind_sample_to_track(getText().getIntValue() - 1, new_sample_path);
             }
         }

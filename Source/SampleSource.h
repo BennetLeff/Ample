@@ -24,7 +24,6 @@ struct SampleBuffer
 };
 
 class SampleSource : public AudioTransportSource,
-					 public ChangeListener,
 					 public ValueTreeObject<IDs::SampleSource>,
 					 public Thread 
 {
@@ -34,8 +33,6 @@ public:
 	void prepareToPlay(int samplesPerBlockExpected, double sampleRate) override;
 	void getNextAudioBlock(const AudioSourceChannelInfo& bufferToFill) override;
 	void releaseResources() override;
-
-	void changeListenerCallback(ChangeBroadcaster* source) override;
 
 	void start();
 	void stop();
@@ -49,19 +46,19 @@ public:
 
 	// The directory where files are located. Hardcoded for now.
 	CachedValue<String> resources_directory_; 
-	// CachedValue<String> file_path_;
-	
-	ValueTree state_;
+
 private:
+	// run() is overriden to declare what to do in a new thread
 	void run() override;
 	void check_for_path_to_open();
 
 	SampleBuffer current_buffer_;
 
-	bool is_playing_ = false;
-	int position_ = 0;
+	bool is_playing_;
+	int position_;
 
 	AudioFormatManager format_manager_;
 
 	String file_path_;
+	ValueTree state_;
 };
