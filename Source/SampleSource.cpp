@@ -11,13 +11,19 @@
 
 SampleSource::SampleSource(const ValueTree& value_tree, UndoManager* undo_manager)
 	: ValueTreeObject(value_tree, undo_manager),
-	  resources_directory_(get_state(), IDs::SampleSourceProps::resources_directory, get_undo_manager(),
-			"C:\\Users\\bennet\\Documents\\Workspace\\Ample\\Resources\\"), // cached value initialization
-	  // file_path_(get_state(), IDs::SampleSourceProps::file_path, get_undo_manager(), ""), // cached value initialization
-	  file_path_(""),
 	  state_(value_tree),
+	  resources_directory_(get_state(), IDs::SampleSourceProps::resources_directory, get_undo_manager(),
+			"C:\\Users\\bennet\\Documents\\Workspace\\Ample\\Resources\\"),
+	  //file_path_(get_state(), IDs::SampleSourceProps::file_path, get_undo_manager(), ""), // cached value initialization
+	  file_path_(""),
 	  Thread("")
 {
+	jassert(value_tree.hasType(IDs::SampleSource));
+	resources_directory_.referTo(state_, IDs::SampleSourceProps::resources_directory, get_undo_manager());
+	// file_path_.referTo(state_, IDs::SampleSourceProps::file_path, get_undo_manager());
+
+	state_.setProperty(IDs::SampleSourceProps::file_path, file_path_, get_undo_manager());
+
 	format_manager_.registerBasicFormats();
 	startThread();
 }
@@ -30,12 +36,6 @@ SampleSource::~SampleSource()
 
 void SampleSource::changeListenerCallback(ChangeBroadcaster* source)
 {
-	/*
-	 * If ChangeBroadcaster is any source we should assume it's a Sequencer Event,
-	 * but there should be some checks to assure this. The logic inside here should
-	 * be more complex. 
-	 */
-	// is_playing_ = true;
 }
 
 void SampleSource::getNextAudioBlock(const AudioSourceChannelInfo& buffer_to_fill)
@@ -181,6 +181,7 @@ void SampleSource::set_position(uint32_t pos)
 void SampleSource::set_file_path(const String& path_to_swap)
 {
 	file_path_ = path_to_swap;
+	state_.setProperty(IDs::SampleSourceProps::file_path, file_path_, get_undo_manager());
 }
 
 void SampleSource::prepareToPlay(int samples_per_block_expected, double sample_rate)

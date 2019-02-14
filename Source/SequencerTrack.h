@@ -22,31 +22,6 @@
 
 class SampleSource;
 
-class SampleSourceList : public ValueTreeObjectList<SampleSource>
-{
-public:
-	SampleSourceList(ValueTree state)
-		: ValueTreeObjectList<SampleSource>(state)
-	{
-		rebuild_objects();
-	}
-
-	~SampleSourceList()
-	{
-		freeObjects();
-	}
-
-	bool is_suitable_type(const ValueTree& v) const override;
-
-	SampleSource* create_new_object(const ValueTree& v) override;
-
-	void delete_object(SampleSource* ss) override;
-
-	void new_object_added(SampleSource*) override;
-	void object_removed(SampleSource*) override;
-	void object_order_changed() override;
-};
-
 struct SequencerStep
 {
 	bool is_on_;

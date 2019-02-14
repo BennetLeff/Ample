@@ -50,6 +50,7 @@ public:
 	// The directory where files are located. Hardcoded for now.
 	CachedValue<String> resources_directory_; 
 	// CachedValue<String> file_path_;
+	
 	ValueTree state_;
 private:
 	void run() override;
