@@ -27,3 +27,10 @@ General
 - [ ] Port to Raspberry Pi
 - [ ] Build hardware (Another rabbit hole)
 - [ ] Fancy and nice UI
+
+How To Use
+* Left Arrow Key -> go to main scene
+* Right Arrow Key -> go to file assignment scene, type a number 1-8 to set a sample to a track corresponding to that number
+* Up Arrow Key -> go to the sample editing scene
+* 1-8 Number Keys -> select a track 1-8 to start turning steps (1-8) on or off
+* QWERTYUI Keys -> Each Key sets a step in the selected track to on or off, q <=> step 1, T <=> step 5 etc.
