@@ -11,13 +11,15 @@
 
 SampleSource::SampleSource(const ValueTree& value_tree, UndoManager* undo_manager)
 	: ValueTreeObject(value_tree, undo_manager),
-	is_playing_(false),
-	position_(0),
-	file_path_(""),
-	resources_directory_(get_state(), IDs::SampleSourceProps::resources_directory, get_undo_manager(),
-	"C:\\Users\\bennet\\Documents\\Workspace\\Ample\\Resources\\"),
-	state_(value_tree),
-	Thread("")
+	  is_playing_(false),
+	  position_(0),
+	  start_position_(0),
+	  end_position_(0),
+	  file_path_(""),
+	  resources_directory_(get_state(), IDs::SampleSourceProps::resources_directory, get_undo_manager(),
+	  "C:\\Users\\bennet\\Documents\\Workspace\\Ample\\Resources\\"),
+	  state_(value_tree),
+	  Thread("")
 {
 	jassert(value_tree.hasType(IDs::SampleSource));
 	resources_directory_.referTo(state_, IDs::SampleSourceProps::resources_directory, get_undo_manager());
@@ -188,4 +190,30 @@ void SampleSource::prepareToPlay(int samples_per_block_expected, double sample_r
 void SampleSource::releaseResources()
 {
 	/* Do nothing? */
+}
+
+void SampleSource::set_start_position(const juce::uint32 new_start_pos)
+{
+	start_position_ = new_start_pos;
+	state_.setProperty(IDs::SampleSourceProps::start_position,
+						static_cast<juce::int64>(start_position_), 
+						get_undo_manager());
+}
+
+void SampleSource::set_end_position(const juce::uint32 new_end_pos)
+{
+	end_position_ = new_end_pos;
+	state_.setProperty(IDs::SampleSourceProps::end_position,
+						static_cast<juce::int64>(end_position_),
+						get_undo_manager());
+}
+
+const juce::uint32 SampleSource::get_start_position() const
+{
+	return start_position_;
+}
+
+const juce::uint32 SampleSource::get_end_position() const
+{
+	return end_position_;
 }

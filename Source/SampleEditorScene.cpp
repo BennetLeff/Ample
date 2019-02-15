@@ -2,8 +2,10 @@
 
 
 
-SampleEditorScene::SampleEditorScene()
-	: thumbnail_cache_(5),
+SampleEditorScene::SampleEditorScene(const ValueTree& value_tree, UndoManager* undo_manager)
+	: ValueTreeObject(value_tree, undo_manager),
+	  state_(value_tree),
+	  thumbnail_cache_(5),
 	  thumbnail_(512, format_manager_, thumbnail_cache_)
 {
 	// Eventually register the scene as a listener to thumbnail
@@ -11,6 +13,10 @@ SampleEditorScene::SampleEditorScene()
 	// in the thumbnail
 	format_manager_.registerBasicFormats();
 	thumbnail_.addChangeListener(this);
+    sample_source_ = std::make_unique<SampleSource>(state_.getOrCreateChildWithName(IDs::SampleSource, undo_manager),
+						undo_manager);
+
+	addKeyListener(this);
 }
 
 SampleEditorScene::~SampleEditorScene()
@@ -51,6 +57,7 @@ void SampleEditorScene::paint_if_no_file_loaded(Graphics& g, const Rectangle<int
 
 void SampleEditorScene::paint_if_file_loaded(Graphics& g, const Rectangle<int>& thumbnail_bounds)
 {
+	// Draw thumbnail clip
 	g.setColour(Colours::darkslategrey);
 	g.fillRect(thumbnail_bounds);
 	g.setColour(Colours::lightgoldenrodyellow);                                    
@@ -59,6 +66,16 @@ void SampleEditorScene::paint_if_file_loaded(Graphics& g, const Rectangle<int>& 
 		0.0,                          // start time
 		thumbnail_.getTotalLength(),  // end time
 		1.0f);                        // vertical zoom
+	
+	// Draw time scrubbers
+	scrubber_min_position_ = 10;
+	scrubber_max_position_ = getWidth() - 30;
+	left_scrubber_.setBounds(scrubber_min_position_, getHeight() - 60, scrubber_width_, scrubber_height_);
+	right_scrubber_.setBounds(scrubber_max_position_, getHeight() - 60, scrubber_width_, scrubber_height_);
+
+	g.setColour(Colours::indianred);
+	g.fillRect(left_scrubber_);
+	g.fillRect(right_scrubber_);
 }
 
 void SampleEditorScene::changeListenerCallback(ChangeBroadcaster* source)

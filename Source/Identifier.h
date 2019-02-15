@@ -34,10 +34,20 @@ namespace IDs
 	{
 	}
 	
+	DECLARE_ID(SampleEditorScene)
+	namespace SampleEditorSceneProps
+	{
+		DECLARE_ID(sample_file_path)
+		DECLARE_ID(start_position)
+		DECLARE_ID(end_position)
+	}
+	
 	DECLARE_ID(SampleSource)
 	namespace SampleSourceProps
 	{
-		DECLARE_ID(file_path);
+		DECLARE_ID(file_path)
+		DECLARE_ID(start_position)
+		DECLARE_ID(end_position)
 		DECLARE_ID(resources_directory)
 	}
 

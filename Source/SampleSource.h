@@ -40,6 +40,10 @@ public:
 	void set_file_path(const String& path_to_swap);
 	void set_size(int num_channels, int num_samples);
 	void set_position(uint32_t pos);
+	void set_start_position(const juce::uint32 new_start_pos);
+	void set_end_position(const juce::uint32 new_end_pos);
+	const juce::uint32 get_start_position() const;
+	const juce::uint32 get_end_position() const;
 	void set_playing(bool playing) { is_playing_ = playing;  }
 	bool is_playing() { return is_playing_;  }
 	bool is_empty();
@@ -56,6 +60,8 @@ private:
 
 	bool is_playing_;
 	int position_;
+	juce::uint32 start_position_;
+	juce::uint32 end_position_;
 
 	AudioFormatManager format_manager_;
 

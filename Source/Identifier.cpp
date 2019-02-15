@@ -22,10 +22,20 @@ namespace IDs
 	{
 	}
 
+	DEFINE_ID(SampleEditorScene)
+	namespace SampleEditorSceneProps
+	{
+		DEFINE_ID(sample_file_path)
+		DEFINE_ID(start_position)
+		DEFINE_ID(end_position)
+	}
+
 	DEFINE_ID(SampleSource)
 	namespace SampleSourceProps
 	{
-		DEFINE_ID(file_path);
+		DEFINE_ID(file_path)
+		DEFINE_ID(start_position)
+		DEFINE_ID(end_position)
 		DEFINE_ID(resources_directory)
 	}
 

@@ -15,11 +15,16 @@ MainComponent::MainComponent()
     sequencer_ = std::make_shared<Sequencer>(value_tree_, &undo_manager_, NUM_SEQUENCER_STEPS, 140.0);
 
 	// Set up the main scene
+	/* 
+	 * Scenes represent a "unit" of GUI object composition. Each scene is essentially a grouping and 
+	 * shorthand to represent a collection of GUI objects.
+	 */ 
     main_scene = std::make_unique<MainScene>(sequencer_);
     addAndMakeVisible(main_scene.get());
     main_scene->setSize(MAIN_COMP_WIDTH, MAIN_COMP_HEIGHT);
 	
-	sample_editor_scene_ = std::make_unique<SampleEditorScene>();
+	sample_editor_scene_ = std::make_unique<SampleEditorScene>(value_tree_.getOrCreateChildWithName(IDs::SampleEditorScene, &undo_manager_),
+							&undo_manager_);
     addAndMakeVisible(sample_editor_scene_.get());
     sample_editor_scene_->setSize(MAIN_COMP_WIDTH, MAIN_COMP_HEIGHT);
 	
